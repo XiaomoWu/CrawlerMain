@@ -1,0 +1,25 @@
+如何启用日志记录功能：
+原文地址：http://dll.uuwise.com/index.php?n=ApiDoc.EnableLog
+1、在DLL同一个目录里面创建一个名称为UUExtConfig.ini的文件
+2、在文件里面输入如下内容:
+
+[Debug]
+LogLevel = 1	
+
+
+注：LogLevel 置成1就会记录日志，设置成0不记录，日志记录级别2 3
+
+
+
+如何启用代理服务器功能：
+原文地址：http://dll.uuwise.com/index.php?n=ApiDoc.EnableProxyServer
+如果您连接不上我们的服务器，请访问我们的联通备用服务器。
+
+ 方法是:
+ 修改UUWiseHelper.dll同目录下的配置文件UUExtConfig.ini(如果没有，就创建一个),添加如下内容:
+
+ [Proxy]
+ Server=2   //目前有4组备用服务器，分别为1、2、3、4   
+                    // 3：郑州联通服务器  
+                    // 2：广州电信/联通&网通 双线
+                    其它暂时未启用，启用后会有通知

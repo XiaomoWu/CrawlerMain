@@ -1,0 +1,79 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>8ac5c720-0bb2-480a-ad56-85733382cbc8</ProjectGuid>
+    <ProjectHome>.</ProjectHome>
+    <StartupFile>run_crawler.py</StartupFile>
+    <SearchPath>.</SearchPath>
+    <WorkingDirectory>.</WorkingDirectory>
+    <OutputPath>.</OutputPath>
+    <Name>CrawlerXQ</Name>
+    <RootNamespace>CrawlerXQ</RootNamespace>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <DebugSymbols>true</DebugSymbols>
+    <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+    <DebugSymbols>true</DebugSymbols>
+    <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="crawler\items.py" />
+    <Compile Include="crawler\middleware.py" />
+    <Compile Include="crawler\pipelines.py" />
+    <Compile Include="crawler\scrapy_redis\connection.py" />
+    <Compile Include="crawler\scrapy_redis\dupefilter.py" />
+    <Compile Include="crawler\scrapy_redis\pipelines.py" />
+    <Compile Include="crawler\scrapy_redis\queue.py" />
+    <Compile Include="crawler\scrapy_redis\scheduler.py" />
+    <Compile Include="crawler\scrapy_redis\spiders.py" />
+    <Compile Include="crawler\scrapy_redis\tests.py" />
+    <Compile Include="crawler\scrapy_redis\__init__.py" />
+    <Compile Include="crawler\settings.py" />
+    <Compile Include="crawler\spiders\login_spider.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="crawler\spiders\module1.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="crawler\spiders\xq_gws_ret_day_spider.py" />
+    <Compile Include="crawler\spiders\xq_user_cmt_spider.py" />
+    <Compile Include="crawler\spiders\xq_cube_cmt_spider.py" />
+    <Compile Include="crawler\spiders\xq_cube_info_spider.py" />
+    <Compile Include="crawler\spiders\xq_cube_rb_spider.py" />
+    <Compile Include="crawler\spiders\xq_cube_ret_spider.py" />
+    <Compile Include="crawler\spiders\xq_gws_info_spider.py" />
+    <Compile Include="crawler\spiders\xq_gws_rb_spider.py" />
+    <Compile Include="crawler\spiders\xq_gws_ret_spider.py" />
+    <Compile Include="crawler\spiders\xq_stk_cmt_spider.py" />
+    <Compile Include="crawler\spiders\xq_stk_info_spider.py" />
+    <Compile Include="crawler\spiders\xq_user_favorites_spider.py" />
+    <Compile Include="crawler\spiders\xq_user_followers_spider.py" />
+    <Compile Include="crawler\spiders\xq_user_info_spider.py" />
+    <Compile Include="crawler\spiders\xq_user_members_spider.py" />
+    <Compile Include="crawler\spiders\xq_user_stocks_spider.py" />
+    <Compile Include="crawler\spiders\__init__.py" />
+    <Compile Include="crawler\__init__.py" />
+    <Compile Include="run_crawler.py" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="crawler\" />
+    <Folder Include="crawler\scrapy_redis\" />
+    <Folder Include="crawler\spiders\" />
+  </ItemGroup>
+  <PropertyGroup>
+    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
+  </PropertyGroup>
+  <!-- Uncomment the CoreCompile target to enable the Build command in
+       Visual Studio and specify your pre- and post-build commands in
+       the BeforeBuild and AfterBuild targets below. -->
+  <!--<Target Name="CoreCompile" />-->
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
+</Project>

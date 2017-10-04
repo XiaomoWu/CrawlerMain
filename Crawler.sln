@@ -1,0 +1,44 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.26430.16
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "CrawlerXQ", "CrawlerXQ\CrawlerXQ.pyproj", "{8AC5C720-0BB2-480A-AD56-85733382CBC8}"
+EndProject
+Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "Test", "Test\Test.pyproj", "{AEAB6ABF-5390-451A-A99A-E664C180E5A8}"
+EndProject
+Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "CrawlerGuba", "CrawlerGuba\CrawlerGuba.pyproj", "{066333E6-38B5-4B69-B310-B04E83894497}"
+EndProject
+Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "CrawlerTest", "CrawlerTest\CrawlerTest.pyproj", "{AC4E5CC3-6C29-4294-98B5-7A0F7473BFDA}"
+EndProject
+Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "CrawlerXQ_test", "CrawlerXQ_test\CrawlerXQ_test.pyproj", "{B57489AE-87E1-4EA6-AC16-D1DEE06C01F8}"
+EndProject
+Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "CrawlerXQ_updt", "CrawlerXQupdate(20170512)\CrawlerXQ_updt.pyproj", "{F03599A0-5556-4A6B-B36B-ACBFC408AF48}"
+EndProject
+Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "CrawlerSinaNews", "CrawlerSinaNews\CrawlerSinaNews.pyproj", "{E816693A-EAED-4DB6-8F4C-ABF7F93FC7D2}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{8AC5C720-0BB2-480A-AD56-85733382CBC8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8AC5C720-0BB2-480A-AD56-85733382CBC8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AEAB6ABF-5390-451A-A99A-E664C180E5A8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AEAB6ABF-5390-451A-A99A-E664C180E5A8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{066333E6-38B5-4B69-B310-B04E83894497}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{066333E6-38B5-4B69-B310-B04E83894497}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AC4E5CC3-6C29-4294-98B5-7A0F7473BFDA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AC4E5CC3-6C29-4294-98B5-7A0F7473BFDA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B57489AE-87E1-4EA6-AC16-D1DEE06C01F8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B57489AE-87E1-4EA6-AC16-D1DEE06C01F8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F03599A0-5556-4A6B-B36B-ACBFC408AF48}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F03599A0-5556-4A6B-B36B-ACBFC408AF48}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E816693A-EAED-4DB6-8F4C-ABF7F93FC7D2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E816693A-EAED-4DB6-8F4C-ABF7F93FC7D2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
