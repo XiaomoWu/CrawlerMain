@@ -1,19 +1,17 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>f03599a0-5556-4a6b-b36b-acbfc408af48</ProjectGuid>
-    <ProjectHome>
-    </ProjectHome>
-    <StartupFile>run_crawler.py</StartupFile>
+    <ProjectGuid>6ff43c29-2222-42ea-a38b-c8d0a7ecb314</ProjectGuid>
+    <ProjectHome>.</ProjectHome>
+    <StartupFile>
+    </StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
     <OutputPath>.</OutputPath>
     <Name>CrawlerXQ</Name>
-    <RootNamespace>CrawlerXQ2</RootNamespace>
-    <InterpreterId>Global|ContinuumAnalytics|Anaconda36-64</InterpreterId>
+    <RootNamespace>CrawlerXQ</RootNamespace>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <DebugSymbols>true</DebugSymbols>
@@ -24,30 +22,16 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="crawler\HttpProxyMiddleware.py">
-      <SubType>Code</SubType>
-    </Compile>
+    <Folder Include="crawler\" />
+    <Folder Include="crawler\scrapy_redis\" />
+    <Folder Include="crawler\spiders\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="crawler\fetch_free_proxyes.py" />
+    <Compile Include="crawler\HttpProxyMiddleware.py" />
     <Compile Include="crawler\items.py" />
     <Compile Include="crawler\middleware.py" />
     <Compile Include="crawler\pipelines.py" />
-    <Compile Include="crawler\settings.py" />
-    <Compile Include="crawler\spiders\cube_info.py" />
-    <Compile Include="crawler\spiders\cube_rb.py" />
-    <Compile Include="crawler\spiders\cube_ret.py" />
-    <Compile Include="crawler\fetch_free_proxyes.py">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="crawler\spiders\user_fans.py" />
-    <Compile Include="crawler\spiders\user_follow.py" />
-    <Compile Include="crawler\spiders\user_info.py" />
-    <Compile Include="crawler\spiders\user_info_weibo.py" />
-    <Compile Include="crawler\spiders\user_stock.py" />
-    <Compile Include="crawler\spiders\util.py">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="crawler\spiders\__init__.py" />
-    <Compile Include="crawler\__init__.py" />
-    <Compile Include="run_crawler.py" />
     <Compile Include="crawler\scrapy_redis\connection.py" />
     <Compile Include="crawler\scrapy_redis\defaults.py" />
     <Compile Include="crawler\scrapy_redis\dupefilter.py" />
@@ -58,18 +42,23 @@
     <Compile Include="crawler\scrapy_redis\spiders.py" />
     <Compile Include="crawler\scrapy_redis\utils.py" />
     <Compile Include="crawler\scrapy_redis\__init__.py" />
+    <Compile Include="crawler\settings.py" />
+    <Compile Include="crawler\spiders\cube_info.py" />
+    <Compile Include="crawler\spiders\cube_rb.py" />
+    <Compile Include="crawler\spiders\cube_ret.py" />
+    <Compile Include="crawler\spiders\user_fans.py" />
+    <Compile Include="crawler\spiders\user_follow.py" />
+    <Compile Include="crawler\spiders\user_info.py" />
+    <Compile Include="crawler\spiders\user_info_weibo.py" />
+    <Compile Include="crawler\spiders\user_stock.py" />
+    <Compile Include="crawler\spiders\__init__.py" />
+    <Compile Include="crawler\__init__.py" />
+    <Compile Include="run_crawler.py" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="crawler\" />
-    <Folder Include="crawler\spiders\" />
-    <Folder Include="crawler\scrapy_redis\" />
+    <Content Include="crawler\scrapy.cfg" />
   </ItemGroup>
-  <ItemGroup>
-    <InterpreterReference Include="Global|ContinuumAnalytics|Anaconda36-64" />
-  </ItemGroup>
-  <PropertyGroup>
-    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
-  </PropertyGroup>
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
   <!-- Uncomment the CoreCompile target to enable the Build command in
        Visual Studio and specify your pre- and post-build commands in
        the BeforeBuild and AfterBuild targets below. -->
@@ -78,5 +67,4 @@
   </Target>
   <Target Name="AfterBuild">
   </Target>
-  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
 </Project>
