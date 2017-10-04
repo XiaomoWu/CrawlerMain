@@ -26,9 +26,9 @@ class XQCubeInfoSpider(Spider):
 
     def start_requests(self):
         start_url="https://xueqiu.com/p/"
-        start_page = 1500000
+        start_page = 100
 
-        end_page = 2000000
+        end_page = 200
 
         # iterate each page
         all_page_n = end_page - start_page + 1

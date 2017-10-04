@@ -23,4 +23,4 @@ class RandomRequestHeaders(object):
         request.headers.setdefault('User-Agent', random.choice(self.agents))
         #request.cookies = random.choice(self.cookies)
         request.cookies = self.cookies[0]
-
+        

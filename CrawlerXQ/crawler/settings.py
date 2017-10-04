@@ -8,7 +8,7 @@
 #     http://doc.scrapy.org/en/latest/topics/settings.html
 #
 
-BOT_NAME = 'CrawlerXQ2'
+BOT_NAME = 'CrawlerXQ'
 SPIDER_MODULES = ['crawler.spiders']
 NEWSPIDER_MODULE = 'crawler.spiders'
 
@@ -35,11 +35,7 @@ USER_AGENTS = ["Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1; AcooBrow
 DOWNLOADER_MIDDLEWARES = {
     'crawler.middleware.RandomRequestHeaders': 2,
     'scrapy.downloadermiddlewares.cookies.CookiesMiddleware': 3,
-    #'scrapy.downloadermiddlewares.httpproxy.HttpProxyMiddleware': 4,
-    'crawler.middleware.HttpProxyMiddleware': None,
-    'scrapy.downloadermiddleware.retry.RetryMiddleware': None,
-    'crawler.middleware.CustomRetryMiddleware': None,
-    'crawler.HttpProxyMiddleware.HttpProxyMiddleware': 100,
+    'crawler.HttpProxyMiddleware.HttpProxyMiddleware' : None,
     'scrapy.downloadermiddlewares.httpproxy.HttpProxyMiddleware': 101,
 }
 
@@ -64,22 +60,23 @@ COOKIES = [{'xq_a_token': '05fb8718bacbf3df8f3a4da42ecffcc7dc61b13f',
 # 不能写入LOG_FILE，因为LOG_FILE是root
 LOG_LEVEL = 'INFO'
 LOG_STDOUT = False
-#LOG_FILE = 'C:/Users/rossz/OneDrive/Academy/Crawler/CrawlerXQ2/log.txt'
-LOG_FILE_CUBE_INFO = 'C:/Crawler/CrawlerXQupdate(20170512)/cube_info.log' 
-LOG_FILE_CUBE_RB = 'C:/Crawler/CrawlerXQupdate(20170512)/cube_rb.log' 
-LOG_FILE_CUBE_RET = 'C:/Crawler/CrawlerXQupdate(20170512)/cube_ret.log' 
-LOG_FILE_USER_INFO = 'C:/Crawler/CrawlerXQupdate(20170512)/user_info.log' 
-LOG_FILE_USER_STOCK = 'C:/Crawler/CrawlerXQupdate(20170512)/user_stock.log' 
-LOG_FILE_USER_GUANZHU = 'C:/Crawler/CrawlerXQupdate(20170512)/user_guanzhu.log' 
-LOG_FILE_USER_FENSI = 'C:/Crawler/CrawlerXQupdate(20170512)/user_fensi.log' 
-LOG_FILE_PROXY = 'C:/Crawler/CrawlerXQupdate(20170512)/proxy.log'
-LOG_FILE_PIPELINE = 'C:/Crawler/CrawlerXQupdate(20170512)/pipeline.log' 
+
+
+LOG_FILE_CUBE_INFO = 'cube_info.log' 
+LOG_FILE_CUBE_RB = 'cube_rb.log' 
+LOG_FILE_CUBE_RET = 'cube_ret.log' 
+LOG_FILE_USER_INFO = 'user_info.log' 
+LOG_FILE_USER_STOCK = 'user_stock.log' 
+LOG_FILE_USER_GUANZHU = 'user_guanzhu.log' 
+LOG_FILE_USER_FENSI = 'user_fensi.log' 
+LOG_FILE_PROXY = 'proxy.log'
+LOG_FILE_PIPELINE = 'pipeline.log' 
 
 
 # MongoDB settings
 MONGODB_HOST = 'localhost'
 MONGODB_PORT = 27017
-MONGODB_DBNAME = 'xueqiutest'
+MONGODB_DBNAME = 'XQ-2017-09'
 
 # Redis
 # Enables scheduling storing requests queue in redis.

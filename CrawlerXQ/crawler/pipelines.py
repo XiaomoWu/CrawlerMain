@@ -39,6 +39,8 @@ class MongoPipeline(object):
                     self.db[spider.name].insert(content)
                 else:
                     self.logger.warn('Pipeline Error (unknown content type): %s %s' % (spider.name, str(type(content)), item['url']))
+                
+                #return item
             
                 # 只有成功写入数据库的request才会被加入dupefilter
                 redis_key = '%s:dupefilter' % (spider.name)
@@ -49,7 +51,6 @@ class MongoPipeline(object):
             elif "content" not in item and "fp" in item:
                 redis_key = '%s:dupefilter' % (spider.name)
                 self.redis_server.sadd(redis_key, item['fp'])                
-                #print("write sp: 404")                
 
         except Exception as ex:
             self.logger.warn('Pipeline Error (others): %s %s' % (str(ex),  str(item['url'])))
