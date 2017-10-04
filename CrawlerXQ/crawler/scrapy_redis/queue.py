@@ -1,33 +1,51 @@
 from scrapy.utils.reqser import request_to_dict, request_from_dict
 
-try:
-    import cPickle as pickle
-except ImportError:
-    import pickle
+from . import picklecompat
 
 
 class Base(object):
-    """Per-spider queue/stack base class"""
+    """Per-spider base queue class"""
 
-    def __init__(self, server, spider, key):
+    def __init__(self, server, spider, key, serializer=None):
         """Initialize per-spider redis queue.
 
-        Parameters:
-            server -- redis connection
-            spider -- spider instance
-            key -- key for this queue (e.g. "%(spider)s:queue")
+        Parameters
+        ----------
+        server : StrictRedis
+            Redis client instance.
+        spider : Spider
+            Scrapy spider instance.
+        key: str
+            Redis key where to put and get messages.
+        serializer : object
+            Serializer object with ``loads`` and ``dumps`` methods.
+
         """
+        if serializer is None:
+            # Backward compatibility.
+            # TODO: deprecate pickle.
+            serializer = picklecompat
+        if not hasattr(serializer, 'loads'):
+            raise TypeError("serializer does not implement 'loads' function: %r"
+                            % serializer)
+        if not hasattr(serializer, 'dumps'):
+            raise TypeError("serializer '%s' does not implement 'dumps' function: %r"
+                            % serializer)
+
         self.server = server
         self.spider = spider
         self.key = key % {'spider': spider.name}
+        self.serializer = serializer
 
     def _encode_request(self, request):
         """Encode a request object"""
-        return pickle.dumps(request_to_dict(request, self.spider), protocol=-1)
+        obj = request_to_dict(request, self.spider)
+        return self.serializer.dumps(obj)
 
     def _decode_request(self, encoded_request):
         """Decode an request previously encoded"""
-        return request_from_dict(pickle.loads(encoded_request), self.spider)
+        obj = self.serializer.loads(encoded_request)
+        return request_from_dict(obj, self.spider)
 
     def __len__(self):
         """Return the length of the queue"""
@@ -46,7 +64,7 @@ class Base(object):
         self.server.delete(self.key)
 
 
-class SpiderQueue(Base):
+class FifoQueue(Base):
     """Per-spider FIFO queue"""
 
     def __len__(self):
@@ -69,7 +87,7 @@ class SpiderQueue(Base):
             return self._decode_request(data)
 
 
-class SpiderPriorityQueue(Base):
+class PriorityQueue(Base):
     """Per-spider priority queue abstraction using redis' sorted set"""
 
     def __len__(self):
@@ -79,8 +97,11 @@ class SpiderPriorityQueue(Base):
     def push(self, request):
         """Push a request"""
         data = self._encode_request(request)
-        pairs = {data: -request.priority}
-        self.server.zadd(self.key, **pairs)
+        score = -request.priority
+        # We don't use zadd method as the order of arguments change depending on
+        # whether the class is Redis or StrictRedis, and the option of using
+        # kwargs only accepts strings, not bytes.
+        self.server.execute_command('ZADD', self.key, score, data)
 
     def pop(self, timeout=0):
         """
@@ -96,8 +117,8 @@ class SpiderPriorityQueue(Base):
             return self._decode_request(results[0])
 
 
-class SpiderStack(Base):
-    """Per-spider stack"""
+class LifoQueue(Base):
+    """Per-spider LIFO queue."""
 
     def __len__(self):
         """Return the length of the stack"""
@@ -120,4 +141,7 @@ class SpiderStack(Base):
             return self._decode_request(data)
 
 
-__all__ = ['SpiderQueue', 'SpiderPriorityQueue', 'SpiderStack']
+# TODO: Deprecate the use of these names.
+SpiderQueue = FifoQueue
+SpiderStack = LifoQueue
+SpiderPriorityQueue = PriorityQueue

@@ -3,14 +3,17 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>8ac5c720-0bb2-480a-ad56-85733382cbc8</ProjectGuid>
-    <ProjectHome>.</ProjectHome>
+    <ProjectGuid>f03599a0-5556-4a6b-b36b-acbfc408af48</ProjectGuid>
+    <ProjectHome>
+    </ProjectHome>
     <StartupFile>run_crawler.py</StartupFile>
-    <SearchPath>.</SearchPath>
+    <SearchPath>
+    </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
     <OutputPath>.</OutputPath>
     <Name>CrawlerXQ</Name>
-    <RootNamespace>CrawlerXQ</RootNamespace>
+    <RootNamespace>CrawlerXQ2</RootNamespace>
+    <InterpreterId>Global|ContinuumAnalytics|Anaconda36-64</InterpreterId>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <DebugSymbols>true</DebugSymbols>
@@ -21,48 +24,48 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="crawler\HttpProxyMiddleware.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="crawler\items.py" />
     <Compile Include="crawler\middleware.py" />
     <Compile Include="crawler\pipelines.py" />
+    <Compile Include="crawler\settings.py" />
+    <Compile Include="crawler\spiders\cube_info.py" />
+    <Compile Include="crawler\spiders\cube_rb.py" />
+    <Compile Include="crawler\spiders\cube_ret.py" />
+    <Compile Include="crawler\fetch_free_proxyes.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="crawler\spiders\user_fans.py" />
+    <Compile Include="crawler\spiders\user_follow.py" />
+    <Compile Include="crawler\spiders\user_info.py" />
+    <Compile Include="crawler\spiders\user_info_weibo.py" />
+    <Compile Include="crawler\spiders\user_stock.py" />
+    <Compile Include="crawler\spiders\util.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="crawler\spiders\__init__.py" />
+    <Compile Include="crawler\__init__.py" />
+    <Compile Include="run_crawler.py" />
     <Compile Include="crawler\scrapy_redis\connection.py" />
+    <Compile Include="crawler\scrapy_redis\defaults.py" />
     <Compile Include="crawler\scrapy_redis\dupefilter.py" />
+    <Compile Include="crawler\scrapy_redis\picklecompat.py" />
     <Compile Include="crawler\scrapy_redis\pipelines.py" />
     <Compile Include="crawler\scrapy_redis\queue.py" />
     <Compile Include="crawler\scrapy_redis\scheduler.py" />
     <Compile Include="crawler\scrapy_redis\spiders.py" />
-    <Compile Include="crawler\scrapy_redis\tests.py" />
+    <Compile Include="crawler\scrapy_redis\utils.py" />
     <Compile Include="crawler\scrapy_redis\__init__.py" />
-    <Compile Include="crawler\settings.py" />
-    <Compile Include="crawler\spiders\login_spider.py">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="crawler\spiders\module1.py">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="crawler\spiders\xq_gws_ret_day_spider.py" />
-    <Compile Include="crawler\spiders\xq_user_cmt_spider.py" />
-    <Compile Include="crawler\spiders\xq_cube_cmt_spider.py" />
-    <Compile Include="crawler\spiders\xq_cube_info_spider.py" />
-    <Compile Include="crawler\spiders\xq_cube_rb_spider.py" />
-    <Compile Include="crawler\spiders\xq_cube_ret_spider.py" />
-    <Compile Include="crawler\spiders\xq_gws_info_spider.py" />
-    <Compile Include="crawler\spiders\xq_gws_rb_spider.py" />
-    <Compile Include="crawler\spiders\xq_gws_ret_spider.py" />
-    <Compile Include="crawler\spiders\xq_stk_cmt_spider.py" />
-    <Compile Include="crawler\spiders\xq_stk_info_spider.py" />
-    <Compile Include="crawler\spiders\xq_user_favorites_spider.py" />
-    <Compile Include="crawler\spiders\xq_user_followers_spider.py" />
-    <Compile Include="crawler\spiders\xq_user_info_spider.py" />
-    <Compile Include="crawler\spiders\xq_user_members_spider.py" />
-    <Compile Include="crawler\spiders\xq_user_stocks_spider.py" />
-    <Compile Include="crawler\spiders\__init__.py" />
-    <Compile Include="crawler\__init__.py" />
-    <Compile Include="run_crawler.py" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="crawler\" />
-    <Folder Include="crawler\scrapy_redis\" />
     <Folder Include="crawler\spiders\" />
+    <Folder Include="crawler\scrapy_redis\" />
+  </ItemGroup>
+  <ItemGroup>
+    <InterpreterReference Include="Global|ContinuumAnalytics|Anaconda36-64" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

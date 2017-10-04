@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
 
-# -*- coding: utf-8 -*-
-
 # Scrapy settings for crawler_test project
 #
 # For simplicity, this file contains only the most important settings by
@@ -10,28 +8,11 @@
 #     http://doc.scrapy.org/en/latest/topics/settings.html
 #
 
-BOT_NAME = 'crawler_xq'
-
+BOT_NAME = 'CrawlerXQ2'
 SPIDER_MODULES = ['crawler.spiders']
-ITEM_PIPELINES = {
-    'crawler.pipelines.XQPipeline':300,
-}
+NEWSPIDER_MODULE = 'crawler.spiders'
 
-DOWNLOADER_MIDDLEWARES = {
-    'crawler.middleware.RandomRequestHeaders': 1,
-  #  'crawler.middleware.HttpProxyMiddleware': 2,
-#     'scrapy.contrib.downloadermiddleware.cookies.CookiesMiddleware': 2,
-  #  'crawler.middleware.CustomRetryMiddleware': 3,    
-    #'crawler.scrapy_redis.pipelines.RedisPipeline': 2,
-}
-COOKIES_ENABLED = False
-
-RETRY_ENABLED = True
-RETRY_HTTP_CODES = [500, 502, 503, 504, 400, 408]
-
-COOKIES = [{'xq_a_token' : '5340e0ba441f75e15c2e40e508c3c87aaeb2bf68', 'xq_r_token' : '73735f5035a900e44e30ef73e194c8bf6dfc5f6c'}, {'xq_a_token':'cdd8894fa19a2a2678d2096ebd839e7dddebdf84', 'xqat':'cdd8894fa19a2a2678d2096ebd839e7dddebdf84', 'xq_r_token':'3663041b0aced6c9b7682195e91c5c4831d58eef',  'xq_is_login':1}]
-
-
+# User agent
 USER_AGENTS = ["Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1; AcooBrowser; .NET CLR 1.1.4322; .NET CLR 2.0.50727)",
     "Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 6.0; Acoo Browser; SLCC1; .NET CLR 2.0.50727; Media Center PC 5.0; .NET CLR 3.0.04506)",
     "Mozilla/4.0 (compatible; MSIE 7.0; AOL 9.5; AOLBuild 4337.35; Windows NT 5.1; .NET CLR 1.1.4322; .NET CLR 2.0.50727)",
@@ -48,63 +29,122 @@ USER_AGENTS = ["Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1; AcooBrow
     "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/535.11 (KHTML, like Gecko) Chrome/17.0.963.56 Safari/535.11",
     "Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.95 Safari/537.36",
     "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_7_3) AppleWebKit/535.20 (KHTML, like Gecko) Chrome/19.0.1036.7 Safari/535.20",
-    "Opera/9.80 (Macintosh; Intel Mac OS X 10.6.8; U; fr) Presto/2.9.168 Version/11.52",]
+    "Opera/9.80 (Macintosh; Intel Mac OS X 10.6.8; U; fr) Presto/2.9.168 Version/11.52",] 
 
-#DOWNLOAD_DELAY = 0.25
+# Downloader middleware
+DOWNLOADER_MIDDLEWARES = {
+    'crawler.middleware.RandomRequestHeaders': 2,
+    'scrapy.downloadermiddlewares.cookies.CookiesMiddleware': 3,
+    #'scrapy.downloadermiddlewares.httpproxy.HttpProxyMiddleware': 4,
+    'crawler.middleware.HttpProxyMiddleware': None,
+    'scrapy.downloadermiddleware.retry.RetryMiddleware': None,
+    'crawler.middleware.CustomRetryMiddleware': None,
+    'crawler.HttpProxyMiddleware.HttpProxyMiddleware': 100,
+    'scrapy.downloadermiddlewares.httpproxy.HttpProxyMiddleware': 101,
+}
+
+# Download delay
+DOWNLOAD_DELAY = 0
+
+# Pipelines
+ITEM_PIPELINES = {'crawler.pipelines.MongoPipeline': 100,
+                  'crawler.scrapy_redis.pipelines.RedisPipeline': 300
+                  }
+
+# Cookies settings
 DOWNLOADER_STATS = True
+COOKIES_ENABLED = True
 COOKIES_DEBUG = False
-
-PRINT_LOG = True
-
-#LOG_LEVEL = "DEBUG"
-LOG_STDOUT = True # If True, all standard output (and error) of your process will be redirected to the log.  For example if you print 'hello' it will appear in the scrapy log.
-#LOG_FILE = "C:/Users/rossz_000/OneDrive/Academy/Crawler/CrawlerXQ/"
-#LOG_FORMAT = '%(asctime)s [%(name)s] %(levelname)s: %(message)s'
-LOG_ENABLED = True
-
-import logging
-import sys
-logger = logging.getLogger("")
-formatter = logging.Formatter('%(name)-4s %(asctime)s %(levelname)-6s %(message)s', '%a, %d %b %Y %H:%M:%S',)
-stream_handler = logging.StreamHandler(sys.stdout)
-stream_handler.setFormatter(formatter)
-logger.addHandler(stream_handler)
-logger.setLevel(logging.DEBUG)
-
-DUPEFILTER_DEBUG = False
-
-SQL_USER = 'root'
-SQL_PWD = 'zju410'
-SQL_DB = 'xueqiu'
-SQL_HOST = 'localhost'
-SQL_CHARSET = 'utf8'
-SQL_UNICODE = True
-SQL_PORT = 3306
+COOKIES = [{'xq_a_token': '05fb8718bacbf3df8f3a4da42ecffcc7dc61b13f',
+'xq_r_token': 'aacd78ef2bd8c73e6f514a9e2bd71854cdbb9a40'}]
 
 
+
+# Log
+# 不能写入LOG_FILE，因为LOG_FILE是root
+LOG_LEVEL = 'INFO'
+LOG_STDOUT = False
+#LOG_FILE = 'C:/Users/rossz/OneDrive/Academy/Crawler/CrawlerXQ2/log.txt'
+LOG_FILE_CUBE_INFO = 'C:/Crawler/CrawlerXQupdate(20170512)/cube_info.log' 
+LOG_FILE_CUBE_RB = 'C:/Crawler/CrawlerXQupdate(20170512)/cube_rb.log' 
+LOG_FILE_CUBE_RET = 'C:/Crawler/CrawlerXQupdate(20170512)/cube_ret.log' 
+LOG_FILE_USER_INFO = 'C:/Crawler/CrawlerXQupdate(20170512)/user_info.log' 
+LOG_FILE_USER_STOCK = 'C:/Crawler/CrawlerXQupdate(20170512)/user_stock.log' 
+LOG_FILE_USER_GUANZHU = 'C:/Crawler/CrawlerXQupdate(20170512)/user_guanzhu.log' 
+LOG_FILE_USER_FENSI = 'C:/Crawler/CrawlerXQupdate(20170512)/user_fensi.log' 
+LOG_FILE_PROXY = 'C:/Crawler/CrawlerXQupdate(20170512)/proxy.log'
+LOG_FILE_PIPELINE = 'C:/Crawler/CrawlerXQupdate(20170512)/pipeline.log' 
+
+
+# MongoDB settings
+MONGODB_HOST = 'localhost'
+MONGODB_PORT = 27017
+MONGODB_DBNAME = 'xueqiutest'
+
+# Redis
 # Enables scheduling storing requests queue in redis.
-#SCHEDULER = "crawler.scrapy_redis.scheduler.Scheduler"
+SCHEDULER = "crawler.scrapy_redis.scheduler.Scheduler"
+
+# Ensure all spiders share same duplicates filter through redis.
+DUPEFILTER_CLASS = "crawler.scrapy_redis.dupefilter.RFPDupeFilter"
+
+# Default requests serializer is pickle, but it can be changed to any module
+# with loads and dumps functions. Note that pickle is not compatible between
+# python versions.
+# Caveat: In python 3.x, the serializer must return strings keys and support
+# bytes as values. Because of this reason the json or msgpack module will not
+# work by default. In python 2.x there is no such issue and you can use
+# 'json' or 'msgpack' as serializers.
+#SCHEDULER_SERIALIZER = "scrapy_redis.picklecompat"
 
 # Don't cleanup redis queues, allows to pause/resume crawls.
-#SCHEDULER_PERSIST = True
+SCHEDULER_PERSIST = True
 
-# Schedule requests using a priority queue.  (default)
-#SCHEDULER_QUEUE_CLASS = 'crawler.scrapy_redis.queue.SpiderPriorityQueue'
+# Schedule requests using a priority queue. (default)
+#SCHEDULER_QUEUE_CLASS = 'scrapy_redis.queue.PriorityQueue'
 
-# Schedule requests using a queue (FIFO).
-# SCHEDULER_QUEUE_CLASS = 'crawler.scrapy_redis.queue.SpiderQueue'
+# Alternative queues.
+#SCHEDULER_QUEUE_CLASS = 'scrapy_redis.queue.FifoQueue'
+#SCHEDULER_QUEUE_CLASS = 'scrapy_redis.queue.LifoQueue'
 
-# Schedule requests using a stack (LIFO).
-# SCHEDULER_QUEUE_CLASS = 'crawler.scrapy_redis.queue.SpiderStack'
-
-# Max idle time to prevent the spider from being closed when distributed
-# crawling.
+# Max idle time to prevent the spider from being closed when distributed crawling.
 # This only works if queue class is SpiderQueue or SpiderStack,
-# and may also block the same time when your spider start at the first time
-# (because the queue is empty).
+# and may also block the same time when your spider start at the first time (because the queue is empty).
 #SCHEDULER_IDLE_BEFORE_CLOSE = 10
 
+# Store scraped item in redis for post-processing.
+#ITEM_PIPELINES = {
+#    'scrapy_redis.pipelines.RedisPipeline': 300
+#}
+
+# The item pipeline serializes and stores the items in this redis key.
+#REDIS_ITEMS_KEY = '%(spider)s:items'
+
+# The items serializer is by default ScrapyJSONEncoder. You can use any
+# importable path to a callable object.
+#REDIS_ITEMS_SERIALIZER = 'json.dumps'
+
 # Specify the host and port to use when connecting to Redis (optional).
-#REDIS_HOST = 'localhost'
-#REDIS_HOST = '10.180.85.116'
-#REDIS_PORT = 6379
+REDIS_HOST = 'localhost'
+REDIS_PORT = 6379
+
+# Specify the full Redis URL for connecting (optional).
+# If set, this takes precedence over the REDIS_HOST and REDIS_PORT settings.
+#REDIS_URL = 'redis://user:pass@hostname:9001'
+
+# Custom redis client parameters (i.e.: socket timeout, etc.)
+#REDIS_PARAMS  = {}
+# Use custom redis client class.
+#REDIS_PARAMS['redis_cls'] = 'myproject.RedisClient'
+
+# If True, it uses redis' ``SPOP`` operation. You have to use the ``SADD``
+# command to add URLs to the redis queue. This could be useful if you
+# want to avoid duplicates in your start urls list and the order of
+# processing does not matter.
+#REDIS_START_URLS_AS_SET = False
+
+# Default start urls key for RedisSpider and RedisCrawlSpider.
+#REDIS_START_URLS_KEY = '%(name)s:start_urls'
+
+# Use other encoding than utf-8 for redis.
+#REDIS_ENCODING = 'latin1'
