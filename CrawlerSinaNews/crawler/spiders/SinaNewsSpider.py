@@ -1,346 +1,178 @@
 ﻿from scrapy.spiders import Spider
 from scrapy.selector import Selector
 from scrapy import Request
-from scrapy.utils.request import request_fingerprint
 from crawler.items import SinaNewsItem
 from crawler.settings import *
-from datetime import datetime
+from datetime import datetime, timedelta
 import json
 import time
+import demjson
 import pymongo
 import re   
 import logging
 
 class SinaNewsSpider(Spider):
+    name = "CrawlerSinaNews"
+
+    def start_requests(self):
+        start_url = "http://roll.news.sina.com.cn/interface/rollnews_ch_out_interface.php?col=97,98,99&type=2,1&num=5000&date="    
+        start_date = datetime.strptime("2010-01-01", "%Y-%m-%d").date()
+        end_date = datetime.strptime("2017-09-30", "%Y-%m-%d").date()
+        url_date = []
+        
+        s_d = start_date
+        c_d = s_d.strftime("%Y-%m-%d")
+        url_date.append(c_d)
+        while s_d < end_date:
+            s_d = s_d + timedelta(days=1)
+            c_d = s_d.strftime("%Y-%m-%d")
+            url_date.append(c_d)
+        
+        for i in range(len(url_date)):
+            url = start_url + url_date[i]
+            # 每抓取15天print log
+            if i%15 == 0:
+                print("Now crawl at: " + url_date[i])
+            yield Request(url = url, callback = self.parse)
     
-    
-#class SinaNewsSpider(Spider):
-#    name = SINA_NEWS_SPIDER_NAME
-#    #allowed_domains = SINA_NEWS_ALLOWED_DONAIMS
-#    #start_urls = GUBABBS_POST_START_URLS
-#    start_urls = []
-#    def __init__(self):
-#        self.conn = MySQLdb.connect(user=SQL_USER, passwd=SQL_PWD, db=SQL_SINA_NEWS_DB, host=SQL_HOST,
-#                                    charset=SQL_CHARSET, use_unicode=SQL_UNICODE)
-#        self.cursor = self.conn.cursor()
-#        self.rss_date = []
-#        start_date = datetime.strptime(SINA_NEWS_DATE['start'], "%Y-%m-%d").date()
-#        end_date = datetime.strptime(SINA_NEWS_DATE['end'], "%Y-%m-%d").date()
-#        s_d = start_date
-#        c_d = s_d.strftime("%Y%m%d")
-#        self.rss_date.append(c_d)
-#        self.__init_table(c_d)
-#        while s_d < end_date:
-#            s_d = s_d + timedelta(days=1)
-#            c_d = s_d.strftime("%Y%m%d")
-#            self.rss_date.append(c_d)
-#            self.__init_table(c_d)
-#        ##### debug!!!!!!!!!!!!!!!
-#        #logging.info(self.rss_date)
+    def parse(self, response):
+        item = SinaNewsItem()
+        #print(type(response.body.decode("gbk")))
+        #hxs = Selector(response)
+        body = re.sub("[\s]", "", response.body.decode("GBK"))
+        m = re.search("varjsonData=({\S+?});", body)
+        if m:
+            js = demjson.decode(m.group(1).strip())
+            for i in js['list']: 
+                item['content'] = i
+                url = i['url']
+                yield Request(url = url, callback = self.parse_content, meta = {'item' : item})
 
+    def parse_content(self, response):
+        item = response.meta['item']
+        try:
+            filter_body = response.body.decode('utf8')
+        except Exception as ex:
+            filter_body = response.body.decode("gbk")
+        filter_body = re.sub('<[A-Z]+[0-9]*[^>]*>|</[A-Z]+[^>]*>', '', filter_body)
+        response = response.replace(body = filter_body)
+        hxs =Selector(response)
+
+        # parse id
+        news_id_from_comment = hxs.xpath('//head/*[@name="comment"]/@content').extract()
+        news_id_from_publishid = hxs.xpath('//head/*[@name="publishid"]/@content').extract()
+        if news_id_from_comment:
+            item['content']['news_id'] = news_id_from_comment[0]              
+        elif news_id_from_publishid:
+            item['content']['news_id'] = news_id_from_publishid[0]
+        else:
+            print("No news_id !!!")
+            print(response.url)
+            return
+
+        # keywords / tag
+        key_words = hxs.xpath('//head/*[@name = "keywords"]/@content').extract()      
+        if key_words:
+            item['content']['keywords'] = key_words[0]  
+
+        tags = hxs.xpath('//head/*[@name = "tags"]/@content').extract()      
+        if tags:
+            item['content']['tags'] = tags[0]
+
+        # article create / update / publish time  
+        create = hxs.xpath('//head/*[@name = "weibo: article:create_at"]/@content').extract()      
+        if create:
+            item['content']['news_create_time'] = create[0]
+        update = hxs.xpath('//head/*[@name = "weibo: article:update_at"]/@content').extract()      
+        if update:
+            item['content']['news_update_time'] = update[0]
+        publish = hxs.xpath('//head/*[@property = "article:published_time"]/@content').extract()      
+        if publish:
+            item['content']['news_publish_time'] = publish[0]
+
+        # parse content
+        content = hxs.xpath('//*[@id="artibody"]/p/text()').extract()
+        if content:
+            item['content']['content'] = "\n".join(content)
+            item['url'] = response.url
         
+        # parse source / author
+        source = hxs.xpath('//head/*[@name="mediaid"]/@content').extract()
+        if source:
+            item['content']['source'] = source[0]
+
+        author = hxs.xpath('//head/*[@property="article:author"]/@content').extract()
+        if author:
+            item['content']['author'] = author[0]        
+
+        # parse reply
+        # com 包含了新闻的id和channel，用于生成reply_url
+        k =  item['content']['news_id'].split(':')
+        cmt_id = {}
+
+        if len(k) == 2:
+            cmt_id['channel'] = k[0]
+            cmt_id['news_id'] = k[1]
         
-#        self.rss_urls = SINA_NEWS_RSS_URLS
-#        for i in self.rss_date:
-#            for j in self.rss_urls:
-#                self.start_urls.append(j+i+".js")
-#        logging.info(self.start_urls)
+            reply_url_stat = "http://comment5.news.sina.com.cn/page/info?version=1&format=json&compress=1&ie=utf-8&oe=utf-8&page=1&page_size=20&channel=" + cmt_id['channel'] + "&newsid=" + cmt_id['news_id']
 
-#    def __init_table(self, c_d):
-#        self.cursor.execute('''CREATE TABLE IF NOT EXISTS `'''
-#                                + SINA_NEWS_TABLE + c_d +'''` (
-#                                  `id` varchar(100) NOT NULL,
-#                                  `stock_id` varchar(20) DEFAULT NULL,
-#                                  `url` varchar(200) NOT NULL,
-#                                  `sector_id` varchar(128) DEFAULT NULL,
-#                                  `title` varchar(200) NOT NULL,
-#                                  `pubdate` datetime NOT NULL,
-#                                  `content` text NOT NULL,
-#                                  `lastcrawl` bigint(20) NOT NULL,
-#                                  `info_source` varchar(128) NOT NULL,
-#                                  `reply_num` int(11) NOT NULL,
-#                                  `hotness` int(11) DEFAULT NULL,
-#                                  `valid` int(1) NOT NULL,
-#                                  PRIMARY KEY (`id`),
-#                                  KEY `primary_key` (`id`)
-#                                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;''')
-#        self.conn.commit()
-#        self.cursor.execute('''CREATE TABLE IF NOT EXISTS `'''
-#                                + SINA_NEWS_REPLY_TABLE + c_d +'''` (
-#                                  `id` varchar(100) NOT NULL,
-#                                  `news_id` varchar(100) NOT NULL,
-#                                  `content` longtext NOT NULL,
-#                                  `lastcrawl` bigint(20) NOT NULL,
-#                                  PRIMARY KEY (`id`),
-#                                  KEY `primary_key` (`id`)
-#                                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;''')
-#        self.conn.commit()
-#        return
-    
-#    def __get_sector_id_from_rss_url(self, url):
-#        m = re.search("^http://rss.sina.com.cn/rollnews/(\w+)/(\d+).js$", url)
-#        if m:
-#            d = {}
-#            d['sector'] = str(m.group(1))
-#            d['date'] = str(m.group(2))
-#            return d
-#        else:
-#            d = {}
-#            d['sector'] = "error"
-#            d['date'] = "error"
-#            return d
-
-#    def __get_channel_and_id(self, comment):
-#        k = comment.split(':')
-#        if len(k) == 2:
-#            d = {}
-#            d['channel'] = k[0]
-#            d['news_id'] = k[1]
-#            return d
-#        else:
-#            d = {}
-#            d['channel'] = "error"
-#            d['news_id'] = "error"
-#            return d
-#        '''
-#        m = re.search("(\w+):(\w+)", comment)
-#        if m:
-#            d = {}
-#            d['channel'] = m.group(1)
-#            d['news_id'] = m.group(2)
-#            return d
-#        else:
-#            d = {}
-#            d['channel'] = "error"
-#            d['news_id'] = "error"
-#            return d
-#        '''
-#    def __get_channel_and_id_script(self, body):
-#        m = re.search("channel:'(\w+)'", body)
-#        d = {}
-#        if m:
-#            d['channel'] = str(m.group(1))
-#        else:
-#            d['channel'] = "error"
-#        m = re.search("newsid:'((\w+)-(\w+)-(\w+))'", body)
-#        if m:
-#            d['news_id'] = str(m.group(1))
-#        else:
-#            d['news_id'] = "error"
-#        return d
-
-#    def parse_news(self, response):
-#        item = response.meta['item']
-#        c_d = response.meta['c_d']
-#        if response.status == 404:
-#            item['news_id'] = SINA_NEWS_ERROR_ID
-#            item['news_stock_id'] = SINA_NEWS_ERROR_STOCK_ID
-#            item['news_hotness'] = SINA_NEWS_ERROR_HOTNESS
-#            item['news_replynum'] = SINA_NEWS_ERROR_REPLYNUM
-#            item['news_author'] = SINA_NEWS_ERROR_AUTHOR
-#            item['news_pubdate'] = SINA_NEWS_ERROR_PUB_DATE
-#            item['news_content'] = SINA_NEWS_ERROR_CONTENT
-#            item['news_lastcrawl'] = SINA_NEWS_ERROR_LASTCRAWL
-#            item['news_info_source'] = SINA_NEWS_ERROR_INFO_SOURCE
-#            item['news_valid'] = SINA_NEWS_ERROR_INVALID
-#            logging.warning("%s DELETE" % item['news_url'])
-#            return item
-
-#        #filter_body = response.body
-#        #filter_body = re.sub('<[A-Z]+[0-9]*[^>]*>|</[A-Z]+[^>]*>', '', filter_body)
-#        #response = response.replace(body = filter_body)
-#        hxs =Selector(response)
-
-#        item['news_valid'] = SINA_NEWS_VALID
+            reply_url = "http://comment5.news.sina.com.cn/page/info?version=1&format=json&compress=1&ie=utf-8&oe=utf-8&page_size=100&channel=" + cmt_id['channel'] + "&newsid=" + cmt_id['news_id'] + "&page="
         
-#        # parse content
-#        content = hxs.xpath('//*[@id="artibody"]/p/text()').extract()
-#        if content:
-#            item['news_content'] = "\n".join(content)
-#        else:
-#            item['news_content'] = SINA_NEWS_ERROR_CONTENT
-#            item['news_valid'] = SINA_NEWS_ERROR_INVALID
+            yield Request(url = reply_url_stat, meta = {'item':item, 'cmt_url':reply_url}, callback = self.parse_reply)
         
-#        # parse author
-#        author_l = hxs.xpath('//*[@id="media_name"]//text()').extract()
-#        author_tt = []
-#        for i in author_l:
-#            if len(i.split()) == 1:
-#                author_tt.append(i.split()[0])
-#        if len(author_tt) >= 1:
-#            #item['news_author'] = author_tt[0]
-#            item['news_info_source'] = author_tt[0]
-#        else:
-#            #item['news_author'] = SINA_NEWS_ERROR_AUTHOR
-#            item['news_info_source'] = SINA_NEWS_ERROR_INFO_SOURCE
+        # 如果解析不出comment reply，那么就不抓reply
+        else:
+            yield item
 
-#        # parse id
-#        news_id = hxs.xpath('//*[@name="comment"]/@content').extract()
-#        if news_id:
-#            item['news_id'] = news_id[0]
-#        else:
-#            item['news_id'] = SINA_NEWS_ERROR_ID
-#            item['news_valid'] = SINA_NEWS_ERROR_INVALID
+    # parse_reply并不解析回复正文，只用来确定总回复数，总翻页数等summary。解析回复正文在parse_reply_json
+    def parse_reply(self, response):
+        d_json = json.loads(response.body.decode('utf8'))
+        item = response.meta['item']
+        cmt_url = response.meta['cmt_url']
         
-#        # parse stock id
-#        item['news_stock_id'] = SINA_NEWS_ERROR_STOCK_ID
+        try:
+            reply = {}
+            if d_json['result']:
+                # 存在回复的情况
+                if 'count' in d_json['result']:
+                    reply['replynum'] = int(d_json['result']['count']['show'])
+                    reply['hotness'] = int(d_json['result']['count']['total'])
+                    reply['qreply'] = int(d_json['result']['count']['qreply']) # 并不知道qreply是什么
+                    item['content']['reply'] = reply
         
-        
-#        # parse reply
-#        com = self.__get_channel_and_id(item['news_id'])
-#        if com['channel'] == 'error':
-#            com = self.__get_channel_and_id_script(response.body)
-#            if com['news_id'] != 'error':
-#                item['news_id'] = com['channel'] + ":" + com['news_id']
-#            else:
-#                item['news_id'] = SINA_NEWS_ERROR_ID
-                
-#        if com['news_id'] == 'error' or com['channel'] == 'error':
-#            item['news_replynum'] = SINA_NEWS_ERROR_REPLYNUM
-#            item['news_hotness'] = SINA_NEWS_ERROR_HOTNESS
-#            item['news_lastcrawl'] = str(time.time())
-#            if item['news_valid'] == SINA_NEWS_VALID:
-#                self.logger.error("ERROR Sina News Channel: %s %s" % (str(item['news_id']), str(item['news_url'])))
+                    # 确定需要翻页数        
+                    rptotal = 0
+                    if reply['replynum']%100 == 0:
+                        rptotal = reply['replynum']/100
+                    else:
+                        rptotal = int(reply['replynum']/100) + 1
 
-#        reply_url = SINA_NEWS_REPLY_URL
-        
-#        news_add = "&page=1&page_size=20&channel=" + com['channel'] + "&newsid=" + com['news_id']
-#        ## !!!! page NOT DEFINED.
-#        news_add_reply = "&page_size=100&channel=" + com['channel'] + "&newsid=" + com['news_id'] + "&page="
+                    if rptotal > 0:
+                        yield Request(url = cmt_url + str(1), meta = {'item':item, 'rptotal':rptotal, 'page':1,
+                                        'cmt_url':cmt_url},callback = self.parse_reply_json)
+                    else:
+                        yield item
 
-#        numcmt = reply_url + news_add
-#        cmt = reply_url + news_add_reply
+        # 不存在回复，直接返回item
+        except Exception as ex:
+            yield item
 
-#        '''
-#        print "news_url:", item['news_url']
-#        print "title:", item['news_title']
-#        print "news_pubdate:", item['news_pubdate']
-#        print "content:", item['news_content']
-#        print "news_info_source:", item['news_info_source']
-#        print "news_id:", item['news_id']
-#        raw_input('===============================')
-#        '''
-#        #return item
-#        if item['news_content'] == SINA_NEWS_ERROR_CONTENT or item['news_id'] == 'error':
-#            return
+    def parse_reply_json(self, response):
+        item = response.meta['item']
+        cmt_url = response.meta['cmt_url']
+        page = response.meta['page']
+        rptotal = response.meta['rptotal']        
 
-#        return Request(url = numcmt, meta = {'item':item, 'comment':cmt, 'c_d':c_d}, callback = self.parse_reply_num)
-#        #for i in range(1):
-#            #rr = Request(url = u, meta = {'item':item}, callback = self.parse_reply_num)
-#            #yield rr
-#        #yield Request(url = reply_url + news_add_reply, meta = {'news_id':item['news_id']}, callback = self.parse_reply_json) 
+        d_json = json.loads(response.body.decode('utf8'))
+        if d_json['result']:
+            if 'cmntlist' in d_json['result']:
+                if len(d_json['result']['cmntlist']) > 0:
+                    item = response.meta['item']
+                    item['content']['reply']['reply_content'] = d_json['result']['cmntlist']
 
-#    def parse_reply_num(self, response):
-#        d_json = json.loads(response.body)
-#        item = response.meta['item']
-#        cmt_url = response.meta['comment']
-#        c_d = response.meta['c_d']
-#        if d_json['result']:
-#            if 'count' in d_json['result']:
-#                if 'show' in d_json['result']['count']:
-#                    item['news_replynum'] = int(d_json['result']['count']['show'])
-#                else:
-#                    item['news_replynum'] = SINA_NEWS_ERROR_REPLYNUM
-#                if 'total' in d_json['result']['count']:
-#                    item['news_hotness'] = int(d_json['result']['count']['total'])
-#                else:
-#                    item['news_hotness'] = SINA_NEWS_ERROR_HOTNESS
-#            else:
-#                item['news_replynum'] = SINA_NEWS_ERROR_REPLYNUM
-#                item['news_hotness'] = SINA_NEWS_ERROR_HOTNESS
-#        else:
-#            item['news_replynum'] = SINA_NEWS_ERROR_REPLYNUM
-#            item['news_hotness'] = SINA_NEWS_ERROR_HOTNESS
-            
-#        #print "news_hotness:", item['news_hotness']
-#        #print "news_replynum:", item['news_replynum']
-#        #raw_input('===============================')
-#        item['news_lastcrawl'] = str(time.time())
-
-#        rptotal = 0
-#        if item['news_replynum']%100 == 0:
-#            rptotal = item['news_replynum']/100
-#        else:
-#            rptotal = item['news_replynum']/100 + 1
-
-#        if rptotal > 0:
-#            yield Request(url = cmt_url + str(1), meta = {'news_id':item['news_id'], 'rptotal':rptotal,
-#                            'cmt_url':cmt_url, 'page':1, 'c_d':c_d},callback = self.parse_reply_json)
-        
-#        yield item
-
-#    def parse_reply_json(self, response):
-#        d_json = json.loads(response.body)
-#        news_id = response.meta['news_id']
-#        rptotal = response.meta['rptotal']
-#        cmt_url = response.meta['cmt_url']
-#        page = response.meta['page']
-#        c_d = response.meta['c_d']
-
-#        valid = False
-#        if d_json['result']:
-#            if 'cmntlist' in d_json['result']:
-#                if len(d_json['result']['cmntlist']) > 0:
-#                    #print d_json['result']['cmntlist'][0]['content']
-#                    valid = True
-#        if not valid:
-#            #print "~~~~~~~~"
-#            return
-#        #raw_input('===============================')
-#        item = SinaNewsReplyItem()
-#        item['item_name'] = SINA_NEWS_REPLY_ITEM_NAME
-#        item['news_id'] = news_id
-#        item['reply_id'] = news_id+":"+str(page)
-#        item['content'] = response.body
-#        item['reply_table'] = SINA_NEWS_REPLY_TABLE + c_d
-#        item['reply_lastcrawl'] = str(time.time())
-
-#        if rptotal > page:
-#            yield Request(url = cmt_url + str(page+1), meta = {'news_id':news_id, 'rptotal':rptotal,
-#                        'cmt_url':cmt_url, 'page':page+1, 'c_d':c_d},callback = self.parse_reply_json)
-#        yield item
+        if rptotal > page:
+            yield Request(url = cmt_url + str(page+1), meta = {'item':item, 'rptotal':rptotal,
+                        'cmt_url':response.meta['cmt_url'], 'page':page+1}, callback = self.parse_reply_json)
+        yield item
         
     
-#    def parse(self, response):
-#        rss_parse = self.__get_sector_id_from_rss_url(response.url)
-#        self.logger.info("Fetch Sina News List: %s %s" % (str(rss_parse['sector']), str(rss_parse['date'])))
-#        if PRINT_LOG:
-#            print ("%s:fetch %s %s") % (time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time())), str(rss_parse['sector']), str(rss_parse['date']))          
-#        hxs = Selector(response)
-#        body = response.body.strip()
-#        m = re.search("item:([\s\S]*)};", body)
-#        if m:
-#            body = m.group(1)
-#        else:
-#            return
-#        body = re.sub("\r", "", body)
-#        body = re.sub("\t", "", body)
-#        body = re.sub("\n", "", body)
-#        body = re.sub('category:', '"category":', body)
-#        body = re.sub('cLink:', '"cLink":', body)
-#        body = re.sub('title:', '"title":', body)
-#        body = re.sub('link:', '"link":', body)
-#        body = re.sub('pubDate:', '"pubDate":', body)
-#        # stock specified.
-#        body = re.sub('subcol:', '"subcol":', body)
-        
-#        d_json = json.loads(body.decode("gbk"))
-
-#        items = []
-#        replys = []
-
-#        for i in d_json:
-#            item = SinaNewsItem()
-#            item['item_name'] = SINA_NEWS_ITEM_NAME
-#            item['news_sector_id'] = i['category']
-#            news_pubdate= datetime.strptime(i['pubDate'], "%Y/%m/%d %H:%M")
-#            item['news_pubdate'] = news_pubdate.strftime("%Y-%m-%d %H:%M:%S")
-#            item['news_title'] = i['title']
-#            item['news_url'] = i['link']
-#            item['news_table'] = SINA_NEWS_TABLE + str(rss_parse['date'])
-#            items.append(item)
-#            #yield item
-#            #items.append(self.make_requests_from_url(items[i]['news_url']).replace(callback = self.parse_news))
-#        #max_items = len(items)
-#        for i in items:
-#            yield Request(url = i['news_url'], meta = {'item':i, 'c_d':str(rss_parse['date'])}, callback = self.parse_news)
