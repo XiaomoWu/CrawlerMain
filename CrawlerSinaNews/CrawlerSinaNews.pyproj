@@ -6,8 +6,7 @@
     <ProjectGuid>e816693a-eaed-4db6-8f4c-abf7f93fc7d2</ProjectGuid>
     <ProjectHome>
     </ProjectHome>
-    <StartupFile>
-    </StartupFile>
+    <StartupFile>run_crawler.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>

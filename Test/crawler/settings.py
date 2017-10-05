@@ -45,7 +45,7 @@ DOWNLOAD_DELAY = 0
 
 # Pipelines
 ITEM_PIPELINES = {'crawler.pipelines.MongoPipeline': 100,
-                  'crawler.scrapy_redis.pipelines.RedisPipeline': 300
+                  #'crawler.scrapy_redis.pipelines.RedisPipeline': 300
                   }
 
 # Cookies settings
@@ -60,7 +60,6 @@ COOKIES_DEBUG = False
 LOG_LEVEL = 'INFO'
 LOG_STDOUT = False
 LOG_FILE_PIPELINE = 'pipeline.log' 
-LOG_FILE_SINANEWS = 'sinanews.log'
 
 
 # MongoDB settings
@@ -70,10 +69,10 @@ MONGODB_DBNAME = 'SinaNews-2017-10'
 
 # Redis
 # Enables scheduling storing requests queue in redis.
-SCHEDULER = "crawler.scrapy_redis.scheduler.Scheduler"
+#SCHEDULER = "crawler.scrapy_redis.scheduler.Scheduler"
 
 # Ensure all spiders share same duplicates filter through redis.
-DUPEFILTER_CLASS = "crawler.scrapy_redis.dupefilter.RFPDupeFilter"
+#DUPEFILTER_CLASS = "crawler.scrapy_redis.dupefilter.RFPDupeFilter"
 
 # Default requests serializer is pickle, but it can be changed to any module
 # with loads and dumps functions. Note that pickle is not compatible between
