@@ -37,9 +37,7 @@ class SinaNewsSpider(Spider):
     
     def parse(self, response):
         item = SinaNewsItem()
-        #print(type(response.body.decode("gbk")))
-        #hxs = Selector(response)
-        body = re.sub("[\s]", "", response.body.decode("GBK"))
+        body = re.sub("[\s]", "", response.body.decode("gbk"))
         m = re.search("varjsonData=({\S+?});", body)
         if m:
             js = demjson.decode(m.group(1).strip())
@@ -51,19 +49,22 @@ class SinaNewsSpider(Spider):
                 yield Request(url = url, callback = self.parse_content, meta = {'item' : item})
 
     def parse_content(self, response):
-        # 不抓取video和blog子域名
-        if re.search("http://video", response.url) or re.search("http://blog", response.url):
+        # 不抓取video、blog 、guba 以及 weibo 子域名
+        if re.search("http://video", response.url) or re.search("http://blog", response.url) or re.search("http://passport.weibo", response.url) or  re.search("http://guba", response.url):
             return
         item = response.meta['item']
-        # 老的页面可能用gbk编码，新的页面一般用utf8编码，因此两种编码都要试一下
+        # 老的页面可能用gbk/gb2312编码，新的页面一般用utf8编码，因此两种编码都要试一下
         try:
             filter_body = response.body.decode('utf8')
-        except Exception as ex:
+        except:
             try:
                 filter_body = response.body.decode("gbk")
-            except Exception as ex:
-                print("Can't decode " + str(ex) + "\n" + response.url)
-                return
+            except:
+                try:
+                    filter_body = response.body.decode("gb2312")
+                except Exception as ex:
+                    print("Error: " + str(ex) + "\n" + response.url)
+                    return
 
         filter_body = re.sub('<[A-Z]+[0-9]*[^>]*>|</[A-Z]+[^>]*>', '', filter_body)
         response = response.replace(body = filter_body)
