@@ -17,7 +17,7 @@ class SinaNewsSpider(Spider):
     logger = util.set_logger(name, LOG_FILE_SINANEWS)
 
     def start_requests(self):
-        start_url = "http://roll.news.sina.com.cn/interface/rollnews_ch_out_interface.php?col=96&num=10000&date="    
+        start_url = "http://roll.news.sina.com.cn/interface/rollnews_ch_out_interface.php?col=90&num=10000&date="    
         start_date = datetime.strptime("2010-01-01", "%Y-%m-%d").date()
         end_date = datetime.strptime("2017-09-30", "%Y-%m-%d").date()
         url_date = []
@@ -67,7 +67,7 @@ class SinaNewsSpider(Spider):
                     try:
                         filter_body = response.body.decode("gb2312")
                     except Exception as ex:
-                        print("Error: " + str(ex) + "\n" + response.url)
+                        print("Decode webpage failed: " + response.url)
                         return
 
             filter_body = re.sub('<[A-Z]+[0-9]*[^>]*>|</[A-Z]+[^>]*>', '', filter_body)
@@ -95,7 +95,7 @@ class SinaNewsSpider(Spider):
             else:
                 # 旧网页主要是这种格式
                 filter_body = re.sub("[\s]", "", filter_body)
-                m = re.search('''channel:["'](.+?)["'],newsid:["'](.+?)['"]''', filter_body)
+                m = re.search('''channel:["'](.+?)["'],.*newsid:["'](.+?)['"]''', filter_body)
                 if m:
                     cmt_id = {"channel":m.group(1), "comment_id":m.group(2)}
                     item['content']['cmt_id'] = cmt_id
