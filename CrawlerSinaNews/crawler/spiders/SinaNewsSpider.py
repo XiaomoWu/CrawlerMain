@@ -54,7 +54,7 @@ class SinaNewsSpider(Spider):
     def parse_content(self, response):
         if response.status == 200:
             # 不抓取video、blog 、guba 以及 weibo 子域名
-            if re.search("http://.*video|http://blog|http://passport.weibo|http://guba|http://slide|http://survey", response.url):
+            if re.search("://.*video|://blog|://passport.weibo|://guba|://slide|://survey", response.url):
                 return
             item = response.meta['item']
             # 老的页面可能用gbk/gb2312编码，新的页面一般用utf8编码，因此两种编码都要试一下
@@ -80,7 +80,7 @@ class SinaNewsSpider(Spider):
             if news_id:
                 item['content']['news_id'] = news_id[0]
             else:
-                self.logger.info("No news_id ! skip: %s" % (response.url))
+                self.logger.info("No 'news_id'! Skip: %s" % (response.url))
                 return
 
             # parse cmt_id
