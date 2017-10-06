@@ -17,7 +17,7 @@ class SinaNewsSpider(Spider):
     logger = util.set_logger(name, LOG_FILE_SINANEWS)
 
     def start_requests(self):
-        start_url = "http://roll.news.sina.com.cn/interface/rollnews_ch_out_interface.php?col=97,98,99&num=10000&date="    
+        start_url = "http://roll.news.sina.com.cn/interface/rollnews_ch_out_interface.php?col=96&num=10000&date="    
         start_date = datetime.strptime("2010-01-01", "%Y-%m-%d").date()
         end_date = datetime.strptime("2017-09-30", "%Y-%m-%d").date()
         url_date = []
@@ -87,22 +87,28 @@ class SinaNewsSpider(Spider):
             # cmt_id可能来源于name="comment"（较新的网页），也可能来源于对html的正则解析（较旧的网页）
             cid = hxs.xpath('//head/*[@name="comment"]/@content').extract()
             if cid:
+                # 新网页主要是这种格式
                 d = cid[0].split(":")
                 cmt_id = {"channel":d[0], "comment_id":d[1]}
                 item['content']['cmt_id'] = cmt_id
+                #print("cmt_id 1")
             else:
+                # 旧网页主要是这种格式
                 filter_body = re.sub("[\s]", "", filter_body)
                 m = re.search('''channel:["'](.+?)["'],newsid:["'](.+?)['"]''', filter_body)
                 if m:
                     cmt_id = {"channel":m.group(1), "comment_id":m.group(2)}
                     item['content']['cmt_id'] = cmt_id
+                    #print("cmt_id 2")
                 else:
-                    m = re.search('channel=(.+?)&newsid=(.+?)"', filter_body)
+                    # 个别特例
+                    m = re.search('channel=(.+?)&newsid', filter_body)
                     if m:
-                        cmt_id = {"channel":m.group(1), "comment_id":m.group(2)}
+                        cmt_id = {"channel":m.group(1), "comment_id":item['content']['news_id']}
                         item['content']['cmt_id'] = cmt_id
+                        #print("cmt_id 3")
                     else:
-                        self.logger.info("No cmt_id: %s" % (response.url))
+                        self.logger.info("No 'cmt_id' found: %s" % (response.url))
 
             # keywords / tag
             key_words = hxs.xpath('//head/*[@name = "keywords"]/@content').extract()      
