@@ -15,9 +15,10 @@ import logging
 class SinaNewsSpider(Spider):
     name = "CrawlerSinaNews"
     logger = util.set_logger(name, LOG_FILE_SINANEWS)
+    handle_httpstatus_list = [404]
 
     def start_requests(self):
-        start_url = "http://roll.news.sina.com.cn/interface/rollnews_ch_out_interface.php?col=90&num=10000&date="    
+        start_url = "http://roll.news.sina.com.cn/interface/rollnews_ch_out_interface.php?col=91&num=5010&date="    
         start_date = datetime.strptime("2010-01-01", "%Y-%m-%d").date()
         end_date = datetime.strptime("2017-09-30", "%Y-%m-%d").date()
         url_date = []
@@ -197,7 +198,7 @@ class SinaNewsSpider(Spider):
 
     # parse_reply_json才真正用来解析回复正文
     def parse_reply_json(self, response):
-        item = response.meta['item']
+        item =  response.meta['item']
         cmt_url = response.meta['cmt_url']
         page = response.meta['page']
         rptotal = response.meta['rptotal']        
@@ -205,13 +206,16 @@ class SinaNewsSpider(Spider):
         d_json = json.loads(response.body.decode('utf8'))
         if d_json['result']:
             if 'cmntlist' in d_json['result']:
-                if len(d_json['result']['cmntlist']) > 0:
-                    item = response.meta['item']
+                # 如果reply_content是空的，说明page=1，直接赋值；否则说明page>1，使用extend方法
+                if "reply_content" in item['content']['reply']:
+                    item['content']['reply']['reply_content'].extend(d_json['result']['cmntlist'])
+                else:
                     item['content']['reply']['reply_content'] = d_json['result']['cmntlist']
+
         # page为当前所处页面，直到page和总页数相等才停止抓取
-        if rptotal > page:
-            yield Request(url = cmt_url + str(page+1), meta = {'item':item, 'rptotal':rptotal,
-                        'cmt_url':response.meta['cmt_url'], 'page':page+1}, callback = self.parse_reply_json)
-        yield item
+        if page == rptotal:
+            yield item
+        elif page < rptotal:
+            yield Request(url = cmt_url + str(page+1), meta = {'item':item, 'rptotal':rptotal, 'cmt_url':response.meta['cmt_url'], 'page':page+1}, callback = self.parse_reply_json)
         
     

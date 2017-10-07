@@ -27,13 +27,6 @@
     <InterpreterReference Include="Global|ContinuumAnalytics|Anaconda36-64" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\CrawlerXQ\CrawlerXQ.pyproj">
-      <Name>CrawlerXQ</Name>
-      <Project>{8ac5c720-0bb2-480a-ad56-85733382cbc8}</Project>
-      <Private>True</Private>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <Folder Include="crawler\" />
     <Folder Include="crawler\scrapy_redis\" />
     <Folder Include="crawler\spiders\" />

@@ -44,8 +44,8 @@ DOWNLOADER_MIDDLEWARES = {
 DOWNLOAD_DELAY = 0
 
 # Pipelines
-ITEM_PIPELINES = {'crawler.pipelines.MongoPipeline': 100,
-                  'crawler.scrapy_redis.pipelines.RedisPipeline': 300
+ITEM_PIPELINES = {'crawler.pipelines.MongoPipeline': 300,
+                  'crawler.scrapy_redis.pipelines.RedisPipeline': 400
                   }
 
 # Cookies settings
@@ -57,7 +57,7 @@ COOKIES_DEBUG = False
 
 # Log
 # 不能写入LOG_FILE，因为LOG_FILE是root
-LOG_LEVEL = 'INFO'
+LOG_LEVEL = 'DEBUG'
 LOG_STDOUT = False
 LOG_FILE_PIPELINE = 'pipeline.log' 
 LOG_FILE_SINANEWS = 'sinanews.log'
@@ -66,7 +66,7 @@ LOG_FILE_SINANEWS = 'sinanews.log'
 # MongoDB settings
 MONGODB_HOST = 'localhost'
 MONGODB_PORT = 27017
-MONGODB_DBNAME = 'SinaNews-2017-10'
+MONGODB_DBNAME = 'SinaNews'
 
 # Redis
 # Enables scheduling storing requests queue in redis.
@@ -87,6 +87,9 @@ DUPEFILTER_CLASS = "crawler.scrapy_redis.dupefilter.RFPDupeFilter"
 # Don't cleanup redis queues, allows to pause/resume crawls.
 SCHEDULER_PERSIST = True
 
+# Whether to flush redis queue on start.
+SCHEDULER_FLUSH_ON_START = False
+        
 # Schedule requests using a priority queue. (default)
 #SCHEDULER_QUEUE_CLASS = 'scrapy_redis.queue.PriorityQueue'
 
