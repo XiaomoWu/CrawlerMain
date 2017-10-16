@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from datetime import datetime
 from crawler.settings import *
-from scrapy_redis.defaults import REDIS_CLS
+from crawler.scrapy_redis.defaults import REDIS_CLS
 import pymongo
 import logging
 

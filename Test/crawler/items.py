@@ -12,6 +12,6 @@ class CrawlerTestItem(Item):
     # name = scrapy.Field()
     pass
 
-class SinaNewsItem(Item):
+class TestItem(Item):
     url = Field()
     content = Field()

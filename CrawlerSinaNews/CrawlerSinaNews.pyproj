@@ -6,8 +6,7 @@
     <ProjectGuid>e816693a-eaed-4db6-8f4c-abf7f93fc7d2</ProjectGuid>
     <ProjectHome>
     </ProjectHome>
-    <StartupFile>
-    </StartupFile>
+    <StartupFile>run_crawler.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
@@ -26,35 +25,15 @@
   </PropertyGroup>
   <ItemGroup>
     <InterpreterReference Include="Global|ContinuumAnalytics|Anaconda36-64" />
-    <InterpreterReference Include="Global|PythonCore|2.7" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\CrawlerXQ\CrawlerXQ.pyproj">
-      <Name>CrawlerXQ</Name>
-      <Project>{8ac5c720-0bb2-480a-ad56-85733382cbc8}</Project>
-      <Private>True</Private>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="crawler\" />
-    <Folder Include="crawler\scrapy_redis\" />
-    <Folder Include="crawler\scrapy_redis\__pycache__\" />
     <Folder Include="crawler\spiders\" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="crawler\items.py" />
     <Compile Include="crawler\middleware.py" />
     <Compile Include="crawler\pipelines.py" />
-    <Compile Include="crawler\scrapy_redis\connection.py" />
-    <Compile Include="crawler\scrapy_redis\defaults.py" />
-    <Compile Include="crawler\scrapy_redis\dupefilter.py" />
-    <Compile Include="crawler\scrapy_redis\picklecompat.py" />
-    <Compile Include="crawler\scrapy_redis\pipelines.py" />
-    <Compile Include="crawler\scrapy_redis\queue.py" />
-    <Compile Include="crawler\scrapy_redis\scheduler.py" />
-    <Compile Include="crawler\scrapy_redis\spiders.py" />
-    <Compile Include="crawler\scrapy_redis\utils.py" />
-    <Compile Include="crawler\scrapy_redis\__init__.py" />
     <Compile Include="crawler\settings.py" />
     <Compile Include="crawler\spiders\util.py">
       <SubType>Code</SubType>
@@ -63,24 +42,6 @@
     <Compile Include="crawler\spiders\__init__.py" />
     <Compile Include="crawler\__init__.py" />
     <Compile Include="run_crawler.py" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="crawler\scrapy_redis\__pycache__\connection.cpython-35.pyc" />
-    <Content Include="crawler\scrapy_redis\__pycache__\connection.cpython-36.pyc" />
-    <Content Include="crawler\scrapy_redis\__pycache__\defaults.cpython-35.pyc" />
-    <Content Include="crawler\scrapy_redis\__pycache__\defaults.cpython-36.pyc" />
-    <Content Include="crawler\scrapy_redis\__pycache__\dupefilter.cpython-35.pyc" />
-    <Content Include="crawler\scrapy_redis\__pycache__\dupefilter.cpython-36.pyc" />
-    <Content Include="crawler\scrapy_redis\__pycache__\pipelines.cpython-35.pyc" />
-    <Content Include="crawler\scrapy_redis\__pycache__\pipelines.cpython-36.pyc" />
-    <Content Include="crawler\scrapy_redis\__pycache__\scheduler.cpython-35.pyc" />
-    <Content Include="crawler\scrapy_redis\__pycache__\scheduler.cpython-36.pyc" />
-    <Content Include="crawler\scrapy_redis\__pycache__\spiders.cpython-35.pyc" />
-    <Content Include="crawler\scrapy_redis\__pycache__\spiders.cpython-36.pyc" />
-    <Content Include="crawler\scrapy_redis\__pycache__\utils.cpython-35.pyc" />
-    <Content Include="crawler\scrapy_redis\__pycache__\utils.cpython-36.pyc" />
-    <Content Include="crawler\scrapy_redis\__pycache__\__init__.cpython-35.pyc" />
-    <Content Include="crawler\scrapy_redis\__pycache__\__init__.cpython-36.pyc" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

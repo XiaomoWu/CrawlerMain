@@ -32,7 +32,6 @@
     <Content Include="crawler\scrapy_redis\pipelines.pyc" />
     <Content Include="crawler\scrapy_redis\queue.pyc" />
     <Content Include="crawler\scrapy_redis\scheduler.pyc" />
-    <Content Include="crawler\scrapy_redis\__init__.pyc" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="crawler\items.py" />
