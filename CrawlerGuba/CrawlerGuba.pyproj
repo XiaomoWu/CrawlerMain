@@ -27,36 +27,17 @@
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
   </PropertyGroup>
   <ItemGroup>
-    <Content Include="crawler\scrapy_redis\connection.pyc" />
-    <Content Include="crawler\scrapy_redis\dupefilter.pyc" />
-    <Content Include="crawler\scrapy_redis\pipelines.pyc" />
-    <Content Include="crawler\scrapy_redis\queue.pyc" />
-    <Content Include="crawler\scrapy_redis\scheduler.pyc" />
-  </ItemGroup>
-  <ItemGroup>
     <Compile Include="crawler\items.py" />
     <Compile Include="crawler\middleware.py" />
     <Compile Include="crawler\pipelines.py" />
-    <Compile Include="crawler\scrapy_redis\connection.py" />
-    <Compile Include="crawler\scrapy_redis\dupefilter.py" />
-    <Compile Include="crawler\scrapy_redis\pipelines.py" />
-    <Compile Include="crawler\scrapy_redis\queue.py" />
-    <Compile Include="crawler\scrapy_redis\scheduler.py" />
-    <Compile Include="crawler\scrapy_redis\spiders.py" />
-    <Compile Include="crawler\scrapy_redis\tests.py" />
-    <Compile Include="crawler\scrapy_redis\__init__.py" />
     <Compile Include="crawler\settings.py" />
-    <Compile Include="crawler\spiders\FundBBSPostSpider.py" />
-    <Compile Include="crawler\spiders\GubaBBSOfficialUserSpider.py" />
-    <Compile Include="crawler\spiders\GubaBBSPostSpider.py" />
-    <Compile Include="crawler\spiders\GubaBBSStockSpider.py" />
+    <Compile Include="crawler\spiders\Gubaspider.py" />
     <Compile Include="crawler\spiders\__init__.py" />
     <Compile Include="crawler\__init__.py" />
     <Compile Include="run_crawler.py" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="crawler\" />
-    <Folder Include="crawler\scrapy_redis\" />
     <Folder Include="crawler\spiders\" />
   </ItemGroup>
   <ItemGroup>
