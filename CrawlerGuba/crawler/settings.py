@@ -16,11 +16,10 @@ NEWSPIDER_MODULE = 'crawler.spiders'
 
 LOG_FILE_GUBA = 'C:/CrawlerMain/CrawlerGuba/log-Guba.log'
 LOG_FILE_PIPELINE = 'C:/CrawlerMain/CrawlerGuba/log-Pipeline.log'
-PRINT_LOG = True
-LOG_LEVEL = 'DEBUG'
 LOG_FORMAT = '%(asctime)s [%(name)s] %(levelname)s: %(message)s'
-LOG_ENABLED = True
-LOG_STDOUT = True
+#LOG_ENABLED = True
+LOG_STDOUT = False
+LOG_LEVEL = 'INFO'
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 USER_AGENTS = [

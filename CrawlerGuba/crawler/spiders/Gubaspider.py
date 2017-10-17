@@ -53,12 +53,11 @@ class GubaSpider(Spider):
                 if m_fund_orgs:
                     item = GubaItem()
                     item['content'] = {}
-                    url_fund_org = m_fund_orgs.group(2)
+                    url_fund_org = m_fund_orgs.group(1)
                     item['content']['guba_url'] = url_fund_org
                     item['content']['guba_name'] = m_fund_orgs.group(2)
-                    print(item)
 
-                    yield Request(url = url_fund, meta = {'item':item}, callback = self.parse_page_num)
+                    yield Request(url = url_fund_org, meta = {'item':item}, callback = self.parse_page_num)
 
             #爬取基金论坛子吧的地址和名字
             for fund in funds:
@@ -66,7 +65,7 @@ class GubaSpider(Spider):
                 if m_funds:
                     item = GubaItem()
                     item['content'] = {}
-                    url_fund = m_funds.group(2)
+                    url_fund = m_funds.group(1)
                     item['content']['guba_url'] = url_fund
                     item['content']['guba_name'] = m_funds.group(2)
         
@@ -119,7 +118,7 @@ class GubaSpider(Spider):
         hxs = Selector(response)
         
         p = hxs.xpath('//div[@class="pager"]/span/@data-pager').extract()[0]
-        m = re.search('(l.*_)\|(.+)\|(.+)\|(.*)', p)
+        m = re.search('(.*_)\|(.+)\|(.+)\|(.*)', p)
         postnums = m.group(2)
         heads = m.group(1)
         #sfnums = headnums.group(1)
@@ -174,38 +173,42 @@ class GubaSpider(Spider):
 
     
     def parse_post(self, response):
-        item = response.meta['item']
-        hxs = Selector(response)
+       try:
+           if response.status == 200:
+               item = response.meta['item']
+               hxs = Selector(response)
 
-        dt = hxs.xpath('//div[@class="zwfbtime"]/text()').extract()[0]
-        dt = re.search('\D+(\d{4}-\d{2}-.+:\d{2}).+',dt).group(1)
-        creat_time = datetime.strptime(dt, "%Y-%m-%d %H:%M:%S")
-        item['content']['create_time'] = creat_time
+               dt = hxs.xpath('//div[@class="zwfbtime"]/text()').extract()[0]
+               dt = re.search('\D+(\d{4}-\d{2}-.+:\d{2}).+',dt).group(1)
+               creat_time = datetime.strptime(dt, "%Y-%m-%d %H:%M:%S")
+               item['content']['create_time'] = creat_time
         
-        postitle = hxs.xpath('//div[@class="zwcontentmain"]/div[@id="zwconttbt"]/text()').extract()[0].strip()
-        item['content']['title'] = postitle
+               postitle = hxs.xpath('//div[@class="zwcontentmain"]/div[@id="zwconttbt"]/text()').extract()[0].strip()
+               item['content']['title'] = postitle
        
-        author_url = hxs.xpath('//div[@id="zwconttbn"]/strong/a/@href').extract()[0]
-        item['content']['author_url'] = author_url
+               author_url = hxs.xpath('//div[@id="zwconttbn"]/strong/a/@href').extract()[0]
+               item['content']['author_url'] = author_url
 
-        postcontent = hxs.xpath('//div[@id="zwconbody"]/div[@class="stockcodec"]/text()').extract()[0].strip()
-        item['content']['content'] = postcontent
+               postcontent = hxs.xpath('//div[@id="zwconbody"]/div[@class="stockcodec"]/text()').extract()[0].strip()
+               item['content']['content'] = postcontent
 
-        replynum= response.meta['replynum']
-        item['content']['reply'] = []
-        if int(replynum)%30 == 0:
-            rptotal = int(int(replynum)/30)
+               replynum= response.meta['replynum']
+               item['content']['reply'] = []
+               if int(replynum)%30 == 0:
+                   rptotal = int(int(replynum)/30)
         
-        else:
-            rptotal = int(int(replynum)/30)+1   
+               else:
+                   rptotal = int(int(replynum)/30)+1   
 
-        if rptotal>0:
-            head = re.search('(.+)\.html', response.url).group(1)
-            reply_url = head+"_"+str(1)+".html"
-            yield Request(url = reply_url, meta = {'item': item, 'page':1, 'rptotal': rptotal, 'head': head}, callback = self.parse_reply)
-        else:
-            yield item
-            #print(item)
+               if rptotal>0:
+                   head = re.search('(.+)\.html', response.url).group(1)
+                   reply_url = head+"_"+str(1)+".html"
+                   yield Request(url = reply_url, meta = {'item': item, 'page':1, 'rptotal': rptotal, 'head': head}, callback = self.parse_reply)
+               else:
+                   yield item
+                    #print(item)
+       except Exception as ex:
+           self.logger.warn('Parse Exception: %s %s' % (str(ex), response.url))
 
     def parse_reply(self, response):
         page = response.meta['page']
