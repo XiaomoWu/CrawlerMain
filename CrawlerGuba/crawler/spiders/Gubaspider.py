@@ -50,10 +50,10 @@ class GubaSpider(Spider):
             #爬取基金论坛母吧的地址和名字
             for fund_org in fund_orgs:
                 m_fund_orgs = re.search('href="(.+)">(.+)<\/a', fund_org)
-                if m_fund_org:
+                if m_fund_orgs:
                     item = GubaItem()
                     item['content'] = {}
-                    url_fund_org = m_fund_org.group(2)
+                    url_fund_org = m_fund_orgs.group(2)
                     item['content']['guba_url'] = url_fund_org
                     item['content']['guba_name'] = m_fund_orgs.group(2)
                     print(item)
@@ -115,7 +115,7 @@ class GubaSpider(Spider):
     #解析每个论坛的页数
     def parse_page_num(self, response):
         item = response.meta['item']
-        forum_url = response.meta['forum_url']
+        #forum_url = response.meta['forum_url']
         hxs = Selector(response)
         
         p = hxs.xpath('//div[@class="pager"]/span/@data-pager').extract()[0]
@@ -134,12 +134,12 @@ class GubaSpider(Spider):
             ptotal = int(item['content']['postnums']/80) + 1
 
         for i in range(int(ptotal)):
-            p_url = "http://guba.eastmoney.com/"+N+str(i)+".html"
+            p_url = "http://guba.eastmoney.com/"+heads +str(i)+".html"
             yield Request(p_url, meta = {'item':item}, callback = self.parse_post_list)
         
 
     #抓取每个子吧的帖子条数并翻页
-     def parse_post_list(self, response):
+    def parse_post_list(self, response):
         hxs = Selector(response)
         posts = hxs.xpath('//div[@class="articleh"]').extract()
         for post in posts:
@@ -169,7 +169,7 @@ class GubaSpider(Spider):
                     item['content']['replynum'] = replynum  
                     item['content']['post_id'] = post_id
                     yield Request(url = post_url, meta = {'item':copy.deepcopy(item), 'replynum': replynum}, callback = self.parse_post)
-                    print(item)
+                    #print(item)
 
 
     
@@ -192,6 +192,7 @@ class GubaSpider(Spider):
         item['content']['content'] = postcontent
 
         replynum= response.meta['replynum']
+        item['content']['reply'] = []
         if int(replynum)%30 == 0:
             rptotal = int(int(replynum)/30)
         
@@ -201,72 +202,69 @@ class GubaSpider(Spider):
         if rptotal>0:
             head = re.search('(.+)\.html', response.url).group(1)
             reply_url = head+"_"+str(1)+".html"
-            yield Request(url = reply_url, meta = {'item': item, 'page':1}, callback = self.parse_reply)
+            yield Request(url = reply_url, meta = {'item': item, 'page':1, 'rptotal': rptotal, 'head': head}, callback = self.parse_reply)
         else:
             yield item
-            print(item)
+            #print(item)
 
     def parse_reply(self, response):
-        #self.logger.info(response.body)
         page = response.meta['page']
         rptotal = response.meta['rptotal']
         item = response.meta['item']
         head = response.meta['head']
         hxs = Selector(response)
 
-        #print(response.url)
        
         replists =hxs.xpath('//div[@id="zwlist"]/div[@class="zwli clearfix"]').extract()
         for replist in replists:
-            #print(len(replists))
-            #self.logger.info(replist)
-            reply_author = Selector(text = replist).xpath('//div[@class="zwlianame"]//a/text()').extract()[0]
+            reply = {}
+            try:
+                reply_author = Selector(text = replist).xpath('//div[@class="zwlianame"]//a/text()').extract()[0]
+                reply['reply_author'] = reply_author
+            except:
+                try:
+                    reply_author = Selector(text = replist).xpath('//span[@class="gray"]/text()').extract()[0]
+                    reply['reply_author'] = reply_author
+                except Exception as ex:
+                        print("Decode webpage failed: " + response.url)
+                        return
 
             reply_time = Selector(text = replist).xpath('//div[@class="zwlitime"]/text()').extract()[0]
             reply_time = re.search('\D+(\d{4}-\d{2}-.+:\d{2})',reply_time).group(1)
             reply_time = datetime.strptime(reply_time, "%Y-%m-%d %H:%M:%S")
-
+            reply['reply_time'] = reply_time
+            
             reply_content = Selector(text = replist).xpath('//div[contains(@class, "stockcodec")]').extract()[0]
             reply_content = re.search('stockcodec">(.+)<\/div>', reply_content).group(1).strip()
-            
+            reply['reply_content'] = reply_content
+        
             reply_quote_author = Selector(text = replist).xpath('//div[@class="zwlitalkboxuinfo"]//a/text()').extract()
             if reply_quote_author:
                 reply_quote_author = reply_quote_author[0]
-            else:
-                reply_quote_author = "null"
-            
+                reply['reply_quote_author'] = reply_quote_author
+
             reply_quote_author_url = Selector(text = replist).xpath('//div[@class="zwlitalkboxuinfo"]//a/@href').extract()
             if reply_quote_author_url:
                 reply_quote_author_url = reply_quote_author_url[0]
-            else:
-                reply_quote_author_url = "null"
+                reply['reply_quote_author_url'] = reply_quote_author_url
 
             reply_quote_text = Selector(text = replist).xpath('//div[@class= "zwlitalkboxtext"]').extract()
             if reply_quote_text:
+                reply_quote_text = reply_quote_text[0]
                 reply_quote_content = re.search('"zwlitalkboxtext">(.+)<\/div>', str(reply_quote_text)).group(1)
-            else:
-                reply_quote_content = "null"
+                reply['reply_quote_content'] =  reply_quote_content
 
             reply_quote_timestamp = Selector(text = replist).xpath('//div[@class="zwlitalkboxtime"]/text()').extract()
             if reply_quote_timestamp:
                 reply_quote_timestamp = re.search('\D+(\d{4}.+:\d{2})',reply_quote_timestamp[0]).group(1)
                 reply_quote_timestamp = re.sub("/","-",  reply_quote_timestamp)
                 reply_quote_time = datetime.strptime(str(reply_quote_timestamp), "%Y-%m-%d %H:%M:%S")
-            else:
-                reply_quote_time = datetime.strptime("1900-01-01 00:00:00", "%Y-%m-%d %H:%M:%S")
+                reply['reply_quote_time'] = reply_quote_time
            
-            reply = {'reply_author': reply_author, 
-                         'reply_time': reply_time, 
-                         'reply_content':reply_content, 
-                         'reply_quote_author': reply_quote_author, 
-                         'reply_quote_author_url': reply_quote_author_url,
-                         'reply_quote_content': reply_quote_content,
-                         'reply_quote_time': reply_quote_time}
-
             item['content']['reply'].append(reply)
-    
+            
         if page == rptotal:
-            yield item
+           yield item
         
         elif page < rptotal:
             reply_url = head+ "_" +str(page+1) +".html"
