@@ -43,6 +43,7 @@ USER_AGENTS = [
 # Obey robots.txt rules
 ROBOTSTXT_OBEY = True
 
+
 # Configure maximum concurrent requests performed by Scrapy (default: 16)
 #CONCURRENT_REQUESTS = 32
 
@@ -76,12 +77,15 @@ COOKIES_ENABLED = False
 # See http://scrapy.readthedocs.org/en/latest/topics/downloader-middleware.html
 DOWNLOADER_MIDDLEWARES = {
     'crawler.middleware.RandomRequestHeaders': 100,
+
+'scrapy.downloadermiddlewares.redirect.RedirectMiddleware':201,
     'scrapy.downloadermiddlewares.cookies.CookiesMiddleware': None,
-    #'scrapy.downloadermiddlewares.retry.RetryMiddleware': 200,
+    'scrapy.downloadermiddlewares.retry.RetryMiddleware': None,
     'crawler.HttpProxyMiddleware.HttpProxyMiddleware' : None,
     'scrapy.downloadermiddlewares.httpproxy.HttpProxyMiddleware': None,
 }
 
+REDIRECT_ENABLE = True
 # Download delay
 DOWNLOAD_DELAY = 0
 

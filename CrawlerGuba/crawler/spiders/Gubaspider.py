@@ -56,7 +56,6 @@ class GubaSpider(Spider):
                     url_fund_org = m_fund_orgs.group(1)
                     item['content']['guba_url'] = url_fund_org
                     item['content']['guba_name'] = m_fund_orgs.group(2)
-
                     yield Request(url = url_fund_org, meta = {'item':item}, callback = self.parse_page_num)
 
             #爬取基金论坛子吧的地址和名字
@@ -114,11 +113,11 @@ class GubaSpider(Spider):
     #解析每个论坛的页数
     def parse_page_num(self, response):
         item = response.meta['item']
+        #print(item)
         #forum_url = response.meta['forum_url']
         hxs = Selector(response)
-        
-        p = hxs.xpath('//div[@class="pager"]/span/@data-pager').extract()[0]
-        m = re.search('(.*_)\|(.+)\|(.+)\|(.*)', p)
+        p = hxs.xpath('//div[@id="mainbody"]//div[@class="pager"]//@data-pager').extract()[0]
+        m = re.search('(.*_)\|(.*)\|(.+)\|(.*)', p)
         postnums = m.group(2)
         heads = m.group(1)
         #sfnums = headnums.group(1)
@@ -132,9 +131,14 @@ class GubaSpider(Spider):
         else:
             ptotal = int(item['content']['postnums']/80) + 1
 
-        for i in range(int(ptotal)):
-            p_url = "http://guba.eastmoney.com/"+heads +str(i)+".html"
-            yield Request(p_url, meta = {'item':item}, callback = self.parse_post_list)
+        if int(ptotal) ==0:
+            yield item
+        else:
+            for i in range(int(ptotal)):
+                p_url = "http://guba.eastmoney.com/"+heads +str(i)+".html"
+                yield Request(p_url, meta = {'item':item}, callback = self.parse_post_list)
+                print(item)
+
         
 
     #抓取每个子吧的帖子条数并翻页
@@ -173,42 +177,59 @@ class GubaSpider(Spider):
 
     
     def parse_post(self, response):
-       try:
-           if response.status == 200:
-               item = response.meta['item']
-               hxs = Selector(response)
+        try:
+            if response.status == 200:
+                item = response.meta['item']
+                hxs = Selector(response)
 
-               dt = hxs.xpath('//div[@class="zwfbtime"]/text()').extract()[0]
-               dt = re.search('\D+(\d{4}-\d{2}-.+:\d{2}).+',dt).group(1)
-               creat_time = datetime.strptime(dt, "%Y-%m-%d %H:%M:%S")
-               item['content']['create_time'] = creat_time
+                dt = hxs.xpath('//div[@class="zwfbtime"]/text()').extract()[0]
+                dt = re.search('\D+(\d{4}-\d{2}-.+:\d{2}).+',dt).group(1)
+                creat_time = datetime.strptime(dt, "%Y-%m-%d %H:%M:%S")
+                item['content']['create_time'] = creat_time
+               
+                author_url = hxs.xpath('//div[@id="zwconttbn"]/strong/a/@href').extract()[0]
+                item['content']['author_url'] = author_url
+                try:
+                    postcontent = hxs.xpath('//div[@id="zwconbody"]/div[@class="stockcodec"]/text()').extract()[0].strip()
+                    item['content']['content'] = postcontent
+
+                    postitle = hxs.xpath('//div[@class="zwcontentmain"]/div[@id="zwconttbt"]/text()').extract()[0].strip()
+                    item['content']['title'] = postitle
+                except:
+                    try:
+                        postcontent = hxs.xpath('//div[@class="qa"]//div[contains(@class,"content")]/text()').extract()
+                        postquestion = postcontent[0]
+                        postanswer = postcontent[2].strip()+postcontent[3].strip()
+                        item['content']['content'] = postquestion
+                        item['content']['answer'] = postanswer
+
+                        postanswer_time = hxs.xpath('//div[@class="sign"]/text()').extract()
+                        postanswer_time = re.search('\D+(\d{4}-\d{2}-.+:\d{2})', postanswer_time[1].strip()).group(1)
+                        answer_time = datetime.strptime(postanswer_time, "%Y-%m-%d %H:%M:%S")
+                        item['content']['answer_time'] = answer_time
+
+                        postitle = "Q&A"
+                        item['content']['title'] = postitle
+                    except Exception as ex:
+                            print("Decode webpage failed: " + response.url)
+                            return
+                replynum= response.meta['replynum']
+                item['content']['reply'] = []
+                if int(replynum)%30 == 0:
+                    rptotal = int(int(replynum)/30)
         
-               postitle = hxs.xpath('//div[@class="zwcontentmain"]/div[@id="zwconttbt"]/text()').extract()[0].strip()
-               item['content']['title'] = postitle
-       
-               author_url = hxs.xpath('//div[@id="zwconttbn"]/strong/a/@href').extract()[0]
-               item['content']['author_url'] = author_url
+                else:
+                    rptotal = int(int(replynum)/30)+1   
 
-               postcontent = hxs.xpath('//div[@id="zwconbody"]/div[@class="stockcodec"]/text()').extract()[0].strip()
-               item['content']['content'] = postcontent
-
-               replynum= response.meta['replynum']
-               item['content']['reply'] = []
-               if int(replynum)%30 == 0:
-                   rptotal = int(int(replynum)/30)
-        
-               else:
-                   rptotal = int(int(replynum)/30)+1   
-
-               if rptotal>0:
-                   head = re.search('(.+)\.html', response.url).group(1)
-                   reply_url = head+"_"+str(1)+".html"
-                   yield Request(url = reply_url, meta = {'item': item, 'page':1, 'rptotal': rptotal, 'head': head}, callback = self.parse_reply)
-               else:
-                   yield item
-                    #print(item)
-       except Exception as ex:
-           self.logger.warn('Parse Exception: %s %s' % (str(ex), response.url))
+                if rptotal>0:
+                    head = re.search('(.+)\.html', response.url).group(1)
+                    reply_url = head+"_"+str(1)+".html"
+                    yield Request(url = reply_url, meta = {'item': item, 'page':1, 'rptotal': rptotal, 'head': head}, callback = self.parse_reply)
+                else:
+                    yield item
+                        #print(item)
+        except Exception as ex:
+            self.logger.warn('Parse Exception: %s %s' % (str(ex), response.url))
 
     def parse_reply(self, response):
         page = response.meta['page']
