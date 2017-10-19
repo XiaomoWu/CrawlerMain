@@ -17,6 +17,8 @@ import copy
 class GubaSpider(Spider):
     name = 'CrawlerGuba'
     logger = util.set_logger(name, LOG_FILE_GUBA)
+    #handle_httpstatus_list = [404]
+    #website_possible_httpstatus_list = [404]
 
     def start_requests(self): 
         start_url = 'http://guba.eastmoney.com/remenba.aspx?type='
@@ -137,7 +139,6 @@ class GubaSpider(Spider):
             for i in range(int(ptotal)):
                 p_url = "http://guba.eastmoney.com/"+heads +str(i)+".html"
                 yield Request(p_url, meta = {'item':item}, callback = self.parse_post_list)
-                print(item)
 
         
 
@@ -179,23 +180,37 @@ class GubaSpider(Spider):
     def parse_post(self, response):
         try:
             if response.status == 200:
-                item = response.meta['item']
-                hxs = Selector(response)
+                try:
+                    filter_body = response.body.decode('utf8')
+                except:
+                    try:
+                        filter_body = response.body.decode("gbk")
+                    except:
+                        try:
+                            filter_body = response.body.decode("gb2312")
+                        except Exception as ex:
+                            print("Decode webpage failed: " + response.url)
+                            return
+                filter_body = re.sub('<[A-Z]+[0-9]*[^>]*>|</[A-Z]+[^>]*>', '', filter_body)
+                response = response.replace(body = filter_body)
+                hxs =Selector(response)
 
+                item = response.meta['item']
                 dt = hxs.xpath('//div[@class="zwfbtime"]/text()').extract()[0]
-                dt = re.search('\D+(\d{4}-\d{2}-.+:\d{2}).+',dt).group(1)
+                dt = re.search('\D+(\d{4}-\d{2}-.+:\d{2})',dt).group(1)
                 creat_time = datetime.strptime(dt, "%Y-%m-%d %H:%M:%S")
                 item['content']['create_time'] = creat_time
                
                 author_url = hxs.xpath('//div[@id="zwconttbn"]/strong/a/@href').extract()[0]
                 item['content']['author_url'] = author_url
-                try:
+                try: #针对普通帖子
                     postcontent = hxs.xpath('//div[@id="zwconbody"]/div[@class="stockcodec"]/text()').extract()[0].strip()
-                    item['content']['content'] = postcontent
+                    if postcontent:
+                        item['content']['content'] = postcontent
 
                     postitle = hxs.xpath('//div[@class="zwcontentmain"]/div[@id="zwconttbt"]/text()').extract()[0].strip()
                     item['content']['title'] = postitle
-                except:
+                except: #针对问答帖子
                     try:
                         postcontent = hxs.xpath('//div[@class="qa"]//div[contains(@class,"content")]/text()').extract()
                         postquestion = postcontent[0]
@@ -204,15 +219,20 @@ class GubaSpider(Spider):
                         item['content']['answer'] = postanswer
 
                         postanswer_time = hxs.xpath('//div[@class="sign"]/text()').extract()
-                        postanswer_time = re.search('\D+(\d{4}-\d{2}-.+:\d{2})', postanswer_time[1].strip()).group(1)
-                        answer_time = datetime.strptime(postanswer_time, "%Y-%m-%d %H:%M:%S")
-                        item['content']['answer_time'] = answer_time
+                        try:
+                            postanswer_time = hxs.xpath('//div[@class="sign"]/text()').extract()
+                            postanswer_time = re.search('\D+(\d{4}-\d{2}-.+:\d{2})', postanswer_time[1].strip()).group(1)
+                            answer_time = datetime.strptime(postanswer_time, "%Y-%m-%d %H:%M:%S")
+                            item['content']['answer_time'] = answer_time
+                        except Exception as ex:
+                            item['content']['answer_time'] = None
 
                         postitle = "Q&A"
                         item['content']['title'] = postitle
                     except Exception as ex:
-                            print("Decode webpage failed: " + response.url)
-                            return
+                        print("Parse Exception: " + response.url)
+                        return
+
                 replynum= response.meta['replynum']
                 item['content']['reply'] = []
                 if int(replynum)%30 == 0:
@@ -229,7 +249,7 @@ class GubaSpider(Spider):
                     yield item
                         #print(item)
         except Exception as ex:
-            self.logger.warn('Parse Exception: %s %s' % (str(ex), response.url))
+            self.logger.warn('Parse Exception all: %s %s' % (str(ex), response.url))
 
     def parse_reply(self, response):
         page = response.meta['page']
@@ -259,8 +279,11 @@ class GubaSpider(Spider):
             reply['reply_time'] = reply_time
             
             reply_content = Selector(text = replist).xpath('//div[contains(@class, "stockcodec")]').extract()[0]
-            reply_content = re.search('stockcodec">(.+)<\/div>', reply_content).group(1).strip()
-            reply['reply_content'] = reply_content
+            try:
+                reply_content = re.search('stockcodec">(.+)<\/div>', reply_content).group(1).strip()
+                reply['reply_content'] = reply_content
+            except Exception as ex:
+                reply['reply_content'] = reply_content
         
             reply_quote_author = Selector(text = replist).xpath('//div[@class="zwlitalkboxuinfo"]//a/text()').extract()
             if reply_quote_author:

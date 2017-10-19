@@ -80,7 +80,7 @@ DOWNLOADER_MIDDLEWARES = {
 
 'scrapy.downloadermiddlewares.redirect.RedirectMiddleware':201,
     'scrapy.downloadermiddlewares.cookies.CookiesMiddleware': None,
-    'scrapy.downloadermiddlewares.retry.RetryMiddleware': None,
+    'scrapy.downloadermiddlewares.retry.RetryMiddleware': 100,
     'crawler.HttpProxyMiddleware.HttpProxyMiddleware' : None,
     'scrapy.downloadermiddlewares.httpproxy.HttpProxyMiddleware': None,
 }
@@ -152,7 +152,7 @@ DUPEFILTER_CLASS = "scrapy_redis.dupefilter.RFPDupeFilter"
 SCHEDULER_PERSIST = True
 
 #Whether to flush redis queue on start
-SCHEDULER_FLUSH_ON_START = True
+SCHEDULER_FLUSH_ON_START = False
 
 # Schedule requests using a priority queue. (default)
 #SCHEDULER_QUEUE_CLASS = 'scrapy_redis.queue.PriorityQueue'
