@@ -14,13 +14,12 @@ BOT_NAME = 'crawler_guba'
 SPIDER_MODULES = ['crawler.spiders']
 NEWSPIDER_MODULE = 'crawler.spiders'
 
-LOG_FILE_GUBA = 'C:/Crawler/CrawlerGuba/log-Guba.log'
-LOG_FILE_PIPELINE = 'C:/Crawler/CrawlerGuba/log-Pipeline.log'
-PRINT_LOG = True
-LOG_LEVEL = 'DEBUG'
+LOG_FILE_GUBA = 'C:/CrawlerMain/CrawlerGuba/log-Guba.log'
+LOG_FILE_PIPELINE = 'C:/CrawlerMain/CrawlerGuba/log-Pipeline.log'
 LOG_FORMAT = '%(asctime)s [%(name)s] %(levelname)s: %(message)s'
-LOG_ENABLED = True
-LOG_STDOUT = True
+#LOG_ENABLED = True
+LOG_STDOUT = False
+LOG_LEVEL = 'INFO'
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 USER_AGENTS = [
@@ -43,6 +42,7 @@ USER_AGENTS = [
 ]
 # Obey robots.txt rules
 ROBOTSTXT_OBEY = True
+
 
 # Configure maximum concurrent requests performed by Scrapy (default: 16)
 #CONCURRENT_REQUESTS = 32
@@ -76,12 +76,18 @@ COOKIES_ENABLED = False
 # Enable or disable downloader middlewares
 # See http://scrapy.readthedocs.org/en/latest/topics/downloader-middleware.html
 DOWNLOADER_MIDDLEWARES = {
-    'crawler.middlewares.RandomRequestHeaders': 100,
+    'crawler.middleware.RandomRequestHeaders': 100,
+
+'scrapy.downloadermiddlewares.redirect.RedirectMiddleware':201,
     'scrapy.downloadermiddlewares.cookies.CookiesMiddleware': None,
-    #'scrapy.downloadermiddlewares.retry.RetryMiddleware': 200,
+    'scrapy.downloadermiddlewares.retry.RetryMiddleware': 100,
     'crawler.HttpProxyMiddleware.HttpProxyMiddleware' : None,
     'scrapy.downloadermiddlewares.httpproxy.HttpProxyMiddleware': None,
 }
+
+REDIRECT_ENABLE = True
+# Download delay
+DOWNLOAD_DELAY = 0
 
 # Enable or disable extensions
 # See http://scrapy.readthedocs.org/en/latest/topics/extensions.html
@@ -95,6 +101,11 @@ ITEM_PIPELINES =   {
     'crawler.pipelines.MongoPipeline': 300,
     #'crawler.scrapy_redis.pipelines.RedisPipeline': 301,
 }
+
+# Cookies settings
+DOWNLOADER_STATS = True
+COOKIES_ENABLED = True
+COOKIES_DEBUG = False
 
 # Enable and configure the AutoThrottle extension (disabled by default)
 # See http://doc.scrapy.org/en/latest/topics/autothrottle.html
@@ -123,10 +134,10 @@ MONGODB_DBNAME = 'test'
 
 # Redis
 # Enables scheduling storing requests queue in redis.
-#SCHEDULER = "crawler.scrapy_redis.scheduler.Scheduler"
+SCHEDULER = "scrapy_redis.scheduler.Scheduler"
 
 # Ensure all spiders share same duplicates filter through redis.
-#DUPEFILTER_CLASS = "crawler.scrapy_redis.dupefilter.RFPDupeFilter"
+DUPEFILTER_CLASS = "scrapy_redis.dupefilter.RFPDupeFilter"
 
 # Default requests serializer is pickle, but it can be changed to any module
 # with loads and dumps functions. Note that pickle is not compatible between
@@ -139,6 +150,9 @@ MONGODB_DBNAME = 'test'
 
 # Don't cleanup redis queues, allows to pause/resume crawls.
 SCHEDULER_PERSIST = True
+
+#Whether to flush redis queue on start
+SCHEDULER_FLUSH_ON_START = False
 
 # Schedule requests using a priority queue. (default)
 #SCHEDULER_QUEUE_CLASS = 'scrapy_redis.queue.PriorityQueue'
