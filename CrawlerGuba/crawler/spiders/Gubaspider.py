@@ -124,8 +124,7 @@ class GubaSpider(Spider):
         heads = m.group(1)
         #sfnums = headnums.group(1)
 
-        for postnum in postnums:
-            item['content']['postnums'] = int(postnum)
+        item['content']['postnums'] = int(postnums)
             #item['content']['s&f_nums'] = sfnums
            
         if item['content']['postnums']%80 == 0:
@@ -146,8 +145,8 @@ class GubaSpider(Spider):
     def parse_post_list(self, response):
         hxs = Selector(response)
         posts = hxs.xpath('//div[@class="articleh"]').extract()
+        item = response.meta['item']
         for post in posts:
-            item = response.meta['item']
             readnum = Selector(text = post).xpath('//span[@class="l1"]/text()').extract()[0]
             replynum = Selector(text = post).xpath('//span[@class="l2"]/text()').extract()[0]
             url = Selector(text = post).xpath('//span[@class="l3"]/a/@href').extract()[0]
@@ -265,9 +264,12 @@ class GubaSpider(Spider):
             try:
                 reply_author = Selector(text = replist).xpath('//div[@class="zwlianame"]//a/text()').extract()[0]
                 reply['reply_author'] = reply_author
+                reply_author_url = Selector(text = replist).xpath('//div[@class="zwlianame"]//a/@href').extract()[0]
+                reply['reply_author_url'] = reply_author_url
             except:
                 try:
-                    reply_author = Selector(text = replist).xpath('//span[@class="gray"]/text()').extract()[0]
+                    reply_author = Selector(text = replist).xpath('//span[@class="zwnick"]/span').extract()[0]
+                    reply_author = re.search('"gray">(.+)<\/span>', reply_author).group(1)
                     reply['reply_author'] = reply_author
                 except Exception as ex:
                         print("Decode webpage failed: " + response.url)
@@ -279,10 +281,8 @@ class GubaSpider(Spider):
             reply['reply_time'] = reply_time
             
             reply_content = Selector(text = replist).xpath('//div[contains(@class, "stockcodec")]').extract()[0]
-            try:
-                reply_content = re.search('stockcodec">(.+)<\/div>', reply_content).group(1).strip()
-                reply['reply_content'] = reply_content
-            except Exception as ex:
+            if reply_content :
+                reply_content = re.search('stockcodec">(.+)<', reply_content).group(1).strip()
                 reply['reply_content'] = reply_content
         
             reply_quote_author = Selector(text = replist).xpath('//div[@class="zwlitalkboxuinfo"]//a/text()').extract()

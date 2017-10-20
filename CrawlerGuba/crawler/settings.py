@@ -77,8 +77,7 @@ COOKIES_ENABLED = False
 # See http://scrapy.readthedocs.org/en/latest/topics/downloader-middleware.html
 DOWNLOADER_MIDDLEWARES = {
     'crawler.middleware.RandomRequestHeaders': 100,
-
-'scrapy.downloadermiddlewares.redirect.RedirectMiddleware':201,
+    'scrapy.downloadermiddlewares.redirect.RedirectMiddleware':201,
     'scrapy.downloadermiddlewares.cookies.CookiesMiddleware': None,
     'scrapy.downloadermiddlewares.retry.RetryMiddleware': 100,
     'crawler.HttpProxyMiddleware.HttpProxyMiddleware' : None,
