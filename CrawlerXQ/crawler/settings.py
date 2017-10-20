@@ -51,8 +51,7 @@ ITEM_PIPELINES = {'crawler.pipelines.MongoPipeline': 100,
 DOWNLOADER_STATS = True
 COOKIES_ENABLED = True
 COOKIES_DEBUG = False
-COOKIES = [{'xq_a_token': '05fb8718bacbf3df8f3a4da42ecffcc7dc61b13f',
-'xq_r_token': 'aacd78ef2bd8c73e6f514a9e2bd71854cdbb9a40'}]
+COOKIES = [{'xq_a_token': 'aa415f337a2e55801aa4cae96c1a241036a66b36', 'xq_r_token': '1d8f7cd63e809422170265451b170b6a4d208837'}]
 
 
 
@@ -69,6 +68,7 @@ LOG_FILE_USER_INFO = 'user_info.log'
 LOG_FILE_USER_STOCK = 'user_stock.log' 
 LOG_FILE_USER_GUANZHU = 'user_guanzhu.log' 
 LOG_FILE_USER_FENSI = 'user_fensi.log' 
+LOG_FILE_USER_STATUS = 'user_status.log'
 LOG_FILE_PROXY = 'proxy.log'
 LOG_FILE_PIPELINE = 'pipeline.log' 
 
@@ -76,7 +76,7 @@ LOG_FILE_PIPELINE = 'pipeline.log'
 # MongoDB settings
 MONGODB_HOST = 'localhost'
 MONGODB_PORT = 27017
-MONGODB_DBNAME = 'XQ-2017-09'
+MONGODB_DBNAME = 'xueqiutest'
 
 # Redis
 # Enables scheduling storing requests queue in redis.
@@ -124,6 +124,9 @@ SCHEDULER_PERSIST = True
 # Specify the host and port to use when connecting to Redis (optional).
 REDIS_HOST = 'localhost'
 REDIS_PORT = 6379
+
+#Whether to flush redis queue on start
+SCHEDULER_FLUSH_ON_START = False
 
 # Specify the full Redis URL for connecting (optional).
 # If set, this takes precedence over the REDIS_HOST and REDIS_PORT settings.

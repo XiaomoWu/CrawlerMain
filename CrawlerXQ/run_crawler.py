@@ -7,11 +7,12 @@ process = CrawlerProcess(get_project_settings())
 #spider_name = 'xq_cube_info_updt' # pass
 #spider_name = 'xq_cube_rb_updt'# 
 #spider_name = 'xq_cube_ret_updt'#
-spider_name = 'xq_cube_ret_updt_proxy'#
+#spider_name = 'xq_cube_ret_updt_proxy'#
 #spider_name = 'xq_user_fans_updt'# pass
 #spider_name = 'xq_user_follow_updt' # pass
 #spider_name = 'xq_user_info_updt' # pass
 #spider_name = 'xq_user_info_weibo_updt' # pass
 #spider_name = 'xq_user_stock_updt' #pass
+spider_name = 'xq_user_status_updt'
 process.crawl(spider_name)
 process.start()

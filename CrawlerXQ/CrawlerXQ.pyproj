@@ -4,8 +4,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>6ff43c29-2222-42ea-a38b-c8d0a7ecb314</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>
-    </StartupFile>
+    <StartupFile>run_crawler.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
@@ -50,6 +49,9 @@
     <Compile Include="crawler\spiders\user_follow.py" />
     <Compile Include="crawler\spiders\user_info.py" />
     <Compile Include="crawler\spiders\user_info_weibo.py" />
+    <Compile Include="crawler\spiders\user_status.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="crawler\spiders\user_stock.py" />
     <Compile Include="crawler\spiders\util.py" />
     <Compile Include="crawler\spiders\__init__.py" />
