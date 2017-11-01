@@ -13,6 +13,6 @@ process = CrawlerProcess(get_project_settings())
 #spider_name = 'xq_user_info_updt' # pass
 #spider_name = 'xq_user_info_weibo_updt' # pass
 #spider_name = 'xq_user_stock_updt' #pass
-spider_name = 'xq_user_status_updt'
+spider_name = 'xq_user_cmt_updt'
 process.crawl(spider_name)
 process.start()

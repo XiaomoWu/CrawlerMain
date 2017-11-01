@@ -29,7 +29,7 @@ class MongoPipeline(object):
     def process_item(self, item, spider):
         try:
             # 如果item又有content又有fp，正常处理
-            if "content" in item and "fp" in item:
+            if "content" in item:
                 #判断 item['content'] 是否是 dict 
                 content = item['content']
                 if type(content) == dict:
@@ -42,16 +42,6 @@ class MongoPipeline(object):
                 
                 #return item
             
-                # 只有成功写入数据库的request才会被加入dupefilter
-                redis_key = '%s:dupefilter' % (spider.name)
-                self.redis_server.sadd(redis_key, item['fp'])
-                #print("write sp: normal")
-
-            # 如果item没有content但是有fp，说明是cube_info中的404页面，这些也要写入redis，避免下次再进行抓取
-            elif "content" not in item and "fp" in item:
-                redis_key = '%s:dupefilter' % (spider.name)
-                self.redis_server.sadd(redis_key, item['fp'])                
-
         except Exception as ex:
             self.logger.warn('Pipeline Error (others): %s %s' % (str(ex),  str(item['url'])))
 

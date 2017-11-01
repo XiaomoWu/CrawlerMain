@@ -14,21 +14,21 @@ import re
 
 class XQUserStatus(Spider):
     start_at=datetime.now()
-    name = 'xq_user_status_updt'
+    name = 'xq_user_cmt_updt'
     logger = util.set_logger(name, LOG_FILE_USER_STATUS)
     #handle_httpstatus_list = [404]
 
     def start_requests(self):
         start_url="https://xueqiu.com/v4/statuses/user_timeline.json?&count=20&user_id="
 
-        # get start url from MongoDB
+        ## get start url from MongoDB
         db = util.set_mongo_server()
         owner_ids = []
         for id in db.xq_cube_info_updt.find({}, {'owner_id': 1, '_id': 0}):
             owner_ids.append(id['owner_id'])
         owner_ids = list(set(owner_ids))
 
-        #owner_ids = ["8368142440"]
+        #owner_ids = ["1001223822"]
 
         # iterate each symbol
         all_page_n = len(owner_ids)
@@ -53,10 +53,20 @@ class XQUserStatus(Spider):
                     max_page = body['maxPage']
                     page = body['page']
 
-                    # First page, use parse_gz
-                    yield Request(url = response.url + "&page=1", callback = self.parse_status, meta = {'user_id': response.meta['user_id']})
+                    # First page
+                    if page == 1:
+                        content = {}
+                        content['user_id'] = response.meta['user_id']
+                        content['statuses'] = body['statuses']
+                        content['total'] = body['total']
+                        content['max_page'] = body['maxPage']
+                        content['page'] = body['page']
 
-                    # Second + page, use parse_gz
+                        item = XQItem()
+                        item['content'] = content
+                        yield item
+
+                    # Second + page
                     if max_page > 1:
                         for i in range(2, max_page + 1):
                             url = response.url + '&page=' + str(i)

@@ -22,7 +22,6 @@
   </PropertyGroup>
   <ItemGroup>
     <Folder Include="crawler\" />
-    <Folder Include="crawler\scrapy_redis\" />
     <Folder Include="crawler\spiders\" />
   </ItemGroup>
   <ItemGroup>
@@ -31,27 +30,15 @@
     <Compile Include="crawler\items.py" />
     <Compile Include="crawler\middleware.py" />
     <Compile Include="crawler\pipelines.py" />
-    <Compile Include="crawler\scrapy_redis\connection.py" />
-    <Compile Include="crawler\scrapy_redis\defaults.py" />
-    <Compile Include="crawler\scrapy_redis\dupefilter.py" />
-    <Compile Include="crawler\scrapy_redis\picklecompat.py" />
-    <Compile Include="crawler\scrapy_redis\pipelines.py" />
-    <Compile Include="crawler\scrapy_redis\queue.py" />
-    <Compile Include="crawler\scrapy_redis\scheduler.py" />
-    <Compile Include="crawler\scrapy_redis\spiders.py" />
-    <Compile Include="crawler\scrapy_redis\utils.py" />
-    <Compile Include="crawler\scrapy_redis\__init__.py" />
     <Compile Include="crawler\settings.py" />
     <Compile Include="crawler\spiders\cube_info.py" />
     <Compile Include="crawler\spiders\cube_rb.py" />
     <Compile Include="crawler\spiders\cube_ret.py" />
+    <Compile Include="crawler\spiders\user_cmt.py" />
     <Compile Include="crawler\spiders\user_fans.py" />
     <Compile Include="crawler\spiders\user_follow.py" />
     <Compile Include="crawler\spiders\user_info.py" />
     <Compile Include="crawler\spiders\user_info_weibo.py" />
-    <Compile Include="crawler\spiders\user_status.py">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="crawler\spiders\user_stock.py" />
     <Compile Include="crawler\spiders\util.py" />
     <Compile Include="crawler\spiders\__init__.py" />

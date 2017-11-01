@@ -43,9 +43,8 @@ DOWNLOADER_MIDDLEWARES = {
 DOWNLOAD_DELAY = 0
 
 # Pipelines
-ITEM_PIPELINES = {'crawler.pipelines.MongoPipeline': 100,
-                  'crawler.scrapy_redis.pipelines.RedisPipeline': 300
-                  }
+ITEM_PIPELINES = {'crawler.pipelines.MongoPipeline': 100, 
+}
 
 # Cookies settings
 DOWNLOADER_STATS = True
@@ -80,10 +79,10 @@ MONGODB_DBNAME = 'xueqiutest'
 
 # Redis
 # Enables scheduling storing requests queue in redis.
-SCHEDULER = "crawler.scrapy_redis.scheduler.Scheduler"
+SCHEDULER = "scrapy_redis.scheduler.Scheduler"
 
 # Ensure all spiders share same duplicates filter through redis.
-DUPEFILTER_CLASS = "crawler.scrapy_redis.dupefilter.RFPDupeFilter"
+DUPEFILTER_CLASS = "scrapy_redis.dupefilter.RFPDupeFilter"
 
 # Default requests serializer is pickle, but it can be changed to any module
 # with loads and dumps functions. Note that pickle is not compatible between
@@ -126,7 +125,7 @@ REDIS_HOST = 'localhost'
 REDIS_PORT = 6379
 
 #Whether to flush redis queue on start
-SCHEDULER_FLUSH_ON_START = False
+SCHEDULER_FLUSH_ON_START = True
 
 # Specify the full Redis URL for connecting (optional).
 # If set, this takes precedence over the REDIS_HOST and REDIS_PORT settings.

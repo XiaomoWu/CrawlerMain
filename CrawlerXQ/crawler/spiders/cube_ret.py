@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from crawler.scrapy_redis.spiders import RedisSpider
+from scrapy_redis.spiders import RedisSpider
 from crawler.spiders import util
 from scrapy.spiders import Spider
 from datetime import datetime

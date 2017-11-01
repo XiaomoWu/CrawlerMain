@@ -118,8 +118,8 @@ class GubaSpider(Spider):
         #print(item)
         #forum_url = response.meta['forum_url']
         hxs = Selector(response)
-        p = hxs.xpath('//div[@id="articlelistnew"]/div[@class="pager"]/span/@data-pager').extract()[0]
-        m = re.search('(.*_)\|(\d*)\|80', p)
+        p = hxs.xpath('//div[@id="mainbody"]//div[@class="pager"]//@data-pager').extract()[0]
+        m = re.search('(.*_)\|(.*)\|(.+)\|(.*)', p)
         postnums = m.group(2)
         heads = m.group(1)
         #sfnums = headnums.group(1)
@@ -145,8 +145,8 @@ class GubaSpider(Spider):
     def parse_post_list(self, response):
         hxs = Selector(response)
         posts = hxs.xpath('//div[@class="articleh"]').extract()
+        item = response.meta['item']
         for post in posts:
-            item = response.meta['item']
             readnum = Selector(text = post).xpath('//span[@class="l1"]/text()').extract()[0]
             replynum = Selector(text = post).xpath('//span[@class="l2"]/text()').extract()[0]
             url = Selector(text = post).xpath('//span[@class="l3"]/a/@href').extract()[0]
@@ -175,7 +175,7 @@ class GubaSpider(Spider):
                     #print(item)
 
 
-    #爬取帖子的信息
+    #抓取每个帖子的内容
     def parse_post(self, response):
         try:
             if response.status == 200:
@@ -250,7 +250,6 @@ class GubaSpider(Spider):
         except Exception as ex:
             self.logger.warn('Parse Exception all: %s %s' % (str(ex), response.url))
 
-    #爬取帖子回复中的信息
     def parse_reply(self, response):
         page = response.meta['page']
         rptotal = response.meta['rptotal']
@@ -265,13 +264,16 @@ class GubaSpider(Spider):
             try:
                 reply_author = Selector(text = replist).xpath('//div[@class="zwlianame"]//a/text()').extract()[0]
                 reply['reply_author'] = reply_author
+                reply_author_url = Selector(text = replist).xpath('//div[@class="zwlianame"]//a/@href').extract()[0]
+                reply['reply_author_url'] = reply_author_url
             except:
                 try:
-                    reply_author = Selector(text = replist).xpath('//span[@class="gray"]/text()').extract()[0]
+                    reply_author = Selector(text = replist).xpath('//span[@class="zwnick"]/span').extract()[0]
+                    reply_author = re.search('"gray">(.+)<\/span>', reply_author).group(1)
                     reply['reply_author'] = reply_author
                 except Exception as ex:
-                        print("Decode webpage failed: " + response.url)
-                        return
+                    print("Decode webpage failed: " + response.url)
+                    return
 
             reply_time = Selector(text = replist).xpath('//div[@class="zwlitime"]/text()').extract()[0]
             reply_time = re.search('\D+(\d{4}-\d{2}-.+:\d{2})',reply_time).group(1)
@@ -279,11 +281,13 @@ class GubaSpider(Spider):
             reply['reply_time'] = reply_time
             
             reply_content = Selector(text = replist).xpath('//div[contains(@class, "stockcodec")]').extract()[0]
-            try:
-                reply_content = re.search('stockcodec">(.+)<\/div>', reply_content).group(1).strip()
-                reply['reply_content'] = reply_content
-            except Exception as ex:
-                reply['reply_content'] = reply_content
+            if reply_content :
+                try:
+                    reply_content = re.search('stockcodec">(.+)<', reply_content).group(1).strip()
+                    reply['reply_content'] = reply_content
+                except Exception as ex:
+                    print("Decode webpage failed: " + response.url)
+                    return
         
             reply_quote_author = Selector(text = replist).xpath('//div[@class="zwlitalkboxuinfo"]//a/text()').extract()
             if reply_quote_author:
