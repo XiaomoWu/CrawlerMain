@@ -199,7 +199,7 @@ class GubaSpider(Spider):
                 creat_time = datetime.strptime(dt, "%Y-%m-%d %H:%M:%S")
                 item['content']['create_time'] = creat_time
                 
-                try: #针对发帖者为注册会员的帖子
+                try:#针对发帖者为注册会员的帖子
                     author_url = hxs.xpath('//div[@id="zwconttbn"]/strong/a/@href').extract()[0]
                     item['content']['author_url'] = author_url
                 except Exception as ex: #针对发帖者不是注册会员
@@ -233,9 +233,9 @@ class GubaSpider(Spider):
 
                         postitle = "Q&A"
                         item['content']['title'] = postitle
-                except Exception as ex:
-                    print("Parse Exception: " + response.url)
-                    return
+                    except Exception as ex:
+                        print("Parse Exception: " + response.url)
+                        return
 
                 replynum= response.meta['replynum']
                 item['content']['reply'] = []
@@ -251,7 +251,7 @@ class GubaSpider(Spider):
                     yield Request(url = reply_url, meta = {'item': item, 'page':1, 'rptotal': rptotal, 'head': head}, callback = self.parse_reply)
                 else:
                     yield item
-
+                        #print(item)
         except Exception as ex:
             self.logger.warn('Parse Exception all: %s %s' % (str(ex), response.url))
 
@@ -285,7 +285,7 @@ class GubaSpider(Spider):
             reply_time = datetime.strptime(reply_time, "%Y-%m-%d %H:%M:%S")
             reply['reply_time'] = reply_time
 
-            #reply_content的有些结构过于复杂，之后数据清洗再进行结构化 
+            #reply_content的复杂性有些结构过于复杂，之后数据清洗再进行结构化 
             reply_content = Selector(text = replist).xpath('//div[contains(@class, "stockcodec")]').extract()[0]
             try:
                 reply_content = re.search('stockcodec">(.+)<', reply_content).group(1).strip()
@@ -325,3 +325,4 @@ class GubaSpider(Spider):
             reply_url = head+ "_" +str(page+1) +".html"
             yield Request(url = reply_url, meta = {'item':item, 'rptotal':rptotal, 'page': page+1, 'head': head}, callback = self.parse_reply)
     
+

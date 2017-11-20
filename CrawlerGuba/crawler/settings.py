@@ -9,16 +9,18 @@
 #     http://scrapy.readthedocs.org/en/latest/topics/downloader-middleware.html
 #     http://scrapy.readthedocs.org/en/latest/topics/spider-middleware.html
 
-BOT_NAME = 'crawler_guba'
+BOT_NAME = 'CrawlerGuba'
 
 SPIDER_MODULES = ['crawler.spiders']
 NEWSPIDER_MODULE = 'crawler.spiders'
 
-LOG_FILE_GUBA = 'C:/CrawlerMain/CrawlerGuba/log-Guba.log'
-LOG_FILE_PIPELINE = 'C:/CrawlerMain/CrawlerGuba/log-Pipeline.log'
+LOG_FILE_GUBA = 'C:/Code/CrawlerMain/CrawlerGuba/log-Guba.log'
+LOG_FILE_PIPELINE = 'C:/Code/CrawlerMain/CrawlerGuba/log-Pipeline.log'
+LOG_FILE_GUBA_USER_INFO = 'C:/Code/CrawlerMain/CrawlerGuba/log-UserInfo.log'
+LOG_FILE_GUBA_REPLY_USER_INFO = 'C:/Code/CrawlerMain/CrawlerGuba/log-ReplyUserInfo.log'
 LOG_FORMAT = '%(asctime)s [%(name)s] %(levelname)s: %(message)s'
 #LOG_ENABLED = True
-LOG_STDOUT = False
+LOG_STDOUT = True
 LOG_LEVEL = 'INFO'
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
@@ -98,7 +100,7 @@ DOWNLOAD_DELAY = 0
 # See http://scrapy.readthedocs.org/en/latest/topics/item-pipeline.html
 ITEM_PIPELINES =   {
     'crawler.pipelines.MongoPipeline': 300,
-    #'crawler.scrapy_redis.pipelines.RedisPipeline': 301,
+    'scrapy_redis.pipelines.RedisPipeline': 301,
 }
 
 # Cookies settings
@@ -151,7 +153,7 @@ DUPEFILTER_CLASS = "scrapy_redis.dupefilter.RFPDupeFilter"
 SCHEDULER_PERSIST = True
 
 #Whether to flush redis queue on start
-SCHEDULER_FLUSH_ON_START = False
+SCHEDULER_FLUSH_ON_START = True
 
 # Schedule requests using a priority queue. (default)
 #SCHEDULER_QUEUE_CLASS = 'scrapy_redis.queue.PriorityQueue'
