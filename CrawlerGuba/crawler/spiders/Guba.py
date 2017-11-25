@@ -7,7 +7,6 @@ from crawler.items import GubaItem
 from crawler.settings import *
 from datetime import datetime, timedelta
 import json
-#import demjson
 import time
 import pymongo
 import re   
@@ -175,7 +174,7 @@ class GubaSpider(Spider):
                     #print(item)
 
 
-    #抓取每个帖子的内容
+    
     def parse_post(self, response):
         try:
             if response.status == 200:
@@ -228,9 +227,9 @@ class GubaSpider(Spider):
 
                         postitle = "Q&A"
                         item['content']['title'] = postitle
-                    except Exception as ex:
-                        print("Parse Exception: " + response.url)
-                        return
+                except Exception as ex:
+                    print("Parse Exception: " + response.url)
+                    return
 
                 replynum= response.meta['replynum']
                 item['content']['reply'] = []
@@ -246,7 +245,7 @@ class GubaSpider(Spider):
                     yield Request(url = reply_url, meta = {'item': item, 'page':1, 'rptotal': rptotal, 'head': head}, callback = self.parse_reply)
                 else:
                     yield item
-                        #print(item)
+
         except Exception as ex:
             self.logger.warn('Parse Exception all: %s %s' % (str(ex), response.url))
 
@@ -272,8 +271,8 @@ class GubaSpider(Spider):
                     reply_author = re.search('"gray">(.+)<\/span>', reply_author).group(1)
                     reply['reply_author'] = reply_author
                 except Exception as ex:
-                    print("Decode webpage failed: " + response.url)
-                    return
+                        print("Decode webpage failed: " + response.url)
+                        return
 
             reply_time = Selector(text = replist).xpath('//div[@class="zwlitime"]/text()').extract()[0]
             reply_time = re.search('\D+(\d{4}-\d{2}-.+:\d{2})',reply_time).group(1)
@@ -281,13 +280,11 @@ class GubaSpider(Spider):
             reply['reply_time'] = reply_time
             
             reply_content = Selector(text = replist).xpath('//div[contains(@class, "stockcodec")]').extract()[0]
-            if reply_content :
-                try:
-                    reply_content = re.search('stockcodec">(.+)<', reply_content).group(1).strip()
-                    reply['reply_content'] = reply_content
-                except Exception as ex:
-                    print("Decode webpage failed: " + response.url)
-                    return
+            try:
+                reply_content = re.search('stockcodec">(.+)<', reply_content).group(1).strip()
+                reply['reply_content'] = reply_content
+            except Exception as ex:
+                reply['reply_content'] = reply_content
         
             reply_quote_author = Selector(text = replist).xpath('//div[@class="zwlitalkboxuinfo"]//a/text()').extract()
             if reply_quote_author:
