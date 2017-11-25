@@ -31,7 +31,11 @@
     <Compile Include="crawler\middleware.py" />
     <Compile Include="crawler\pipelines.py" />
     <Compile Include="crawler\settings.py" />
-    <Compile Include="crawler\spiders\Gubaspider.py" />
+    <Compile Include="crawler\spiders\Guba.py" />
+    <Compile Include="crawler\spiders\GubaReplyUserInfo.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="crawler\spiders\GubaUserInfo.py" />
     <Compile Include="crawler\spiders\util.py" />
     <Compile Include="crawler\spiders\__init__.py" />
     <Compile Include="crawler\__init__.py" />

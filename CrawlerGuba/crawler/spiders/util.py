@@ -29,3 +29,15 @@ def get_progress(all_page, logger, spider_name, start_at):
     now = datetime.now()
     progress =round(float(get_crawled_n(spider_name))/all_page*100, 1)
     logger.info('Progress:%s%% %s' % (progress, str(now - start_at)))
+
+import collections
+
+def flatten(d, parent_key='', sep='_'):
+    items = []
+    for k, v in d.items():
+        new_key = parent_key + sep + k if parent_key else k
+        if isinstance(v, collections.MutableMapping):
+            items.extend(flatten(v, new_key, sep=sep).items())
+        else:
+            items.append((new_key, v))
+    return dict(items)
