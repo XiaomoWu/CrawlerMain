@@ -14,10 +14,10 @@ BOT_NAME = 'CrawlerGuba'
 SPIDER_MODULES = ['crawler.spiders']
 NEWSPIDER_MODULE = 'crawler.spiders'
 
-LOG_FILE_GUBA = 'C:/Code/CrawlerMain/CrawlerGuba/log-Guba.log'
-LOG_FILE_PIPELINE = 'C:/Code/CrawlerMain/CrawlerGuba/log-Pipeline.log'
-LOG_FILE_GUBA_USER_INFO = 'C:/Code/CrawlerMain/CrawlerGuba/log-UserInfo.log'
-LOG_FILE_GUBA_REPLY_USER_INFO = 'C:/Code/CrawlerMain/CrawlerGuba/log-ReplyUserInfo.log'
+LOG_FILE_GUBA = 'C:/Crawler/CrawlerGuba/log-Guba.log'
+LOG_FILE_PIPELINE = 'C:/Crawler/CrawlerGuba/log-Pipeline.log'
+LOG_FILE_GUBA_USER_INFO = 'C:/Crawler/CrawlerGuba/log-UserInfo.log'
+LOG_FILE_GUBA_REPLY_USER_INFO = 'C:/Crawler/CrawlerGuba/log-ReplyUserInfo.log'
 LOG_FORMAT = '%(asctime)s [%(name)s] %(levelname)s: %(message)s'
 #LOG_ENABLED = True
 LOG_STDOUT = True
