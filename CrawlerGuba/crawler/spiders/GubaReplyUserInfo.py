@@ -13,7 +13,6 @@ import json
 import re
 
 
-
 class GubaReplyUserInfo(Spider):
     start_at = datetime.now()
     name = 'CrawlerGubaReplyUserInfo'
@@ -21,8 +20,8 @@ class GubaReplyUserInfo(Spider):
 
     def start_requests(self):
         db = util.set_mongo_server()
-        reply_author_urls = []            
-        replys = list(db.CrawlerGuba.aggregate([{'$unwind':'$reply'}]))
+        reply_author_urls = [] 
+        replys = list(db.CrawlerGuba.aggregate([{'$project':{'_id': 0, 'reply': 1}} ,{'$unwind': '$reply'}]))
         for reply in replys:
             if 'reply_author_url' in reply['reply']:
                 reply_author_urls.append(reply['reply']['reply_author_url'])
