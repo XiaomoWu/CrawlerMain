@@ -227,9 +227,9 @@ class GubaSpider(Spider):
 
                         postitle = "Q&A"
                         item['content']['title'] = postitle
-                except Exception as ex:
-                    print("Parse Exception: " + response.url)
-                    return
+                    except Exception as ex:
+                        print("Parse Exception: " + response.url)
+                        return
 
                 replynum= response.meta['replynum']
                 item['content']['reply'] = []
