@@ -21,12 +21,13 @@ class GubaReplyUserInfo(Spider):
 
     def start_requests(self):
         db = util.set_mongo_server()
-        reply_author_urls = []            
-        replys = list(db.CrawlerGuba.aggregate([{'$unwind':'$reply'}]))
-        for reply in replys:
-            if 'reply_author_url' in reply['reply']:
-                reply_author_urls.append(reply['reply']['reply_author_url'])
-                
+        reply_author_urls = []    
+        #replys = list(db.CrawlerGuba.aggregate([{'$project':{'_id': 0, 'reply': 1}} ,{'$unwind': '$reply'}]))
+        for url in db.CrawlerGuba.find({}, {'reply.reply_author_url': 1, '_id': 0}):
+            if 'reply' in url:
+                for e in url['reply']:
+                    if 'reply_author_url' in e: 
+                        reply_author_urls.append(e['reply_author_url'])
         reply_author_urls = list(set(reply_author_urls))
         all_page_n = len(reply_author_urls)
         for i in range(all_page_n):
