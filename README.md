@@ -1,4 +1,10 @@
 # CrawlerMain
-主力爬虫
+This is a distributed, vertical crawler system for a set of websites, including the stock message broad of **Eastmoney.com**, the news web portal **Sina.com.cn**, and Social Trading platform **Xueqiu.com**.
 
-一个爬虫系统，抓取的网站包括东方财富通股吧、新浪新闻以及雪球
+## Design
+* Windows platform
+* Python3 + Scrapy
+* Redis for queueing and distributional crawling.
+* MongoDB as data storage system.
+
+
