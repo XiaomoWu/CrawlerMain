@@ -44,6 +44,7 @@ class XQCubeRetSpider(RedisSpider):
         # iterate each symbol
         all_page_n = len(symbols)
         for i in range(all_page_n):
+            now_page_n = i
             symbol = symbols[i].strip()
             if self.cube_type == 'SP':
                 url = sp_url + symbol
@@ -52,8 +53,8 @@ class XQCubeRetSpider(RedisSpider):
 
             # 进度条
             if i%1000==0:
-                self.logger.info('%s / %s' % (str(i), str(all_page_n)))
-                util.get_progress(now_page = i, all_page = all_page_n, logger = self.logger, spider_name = self.name, start_at = self.start_at)
+                 self.logger.info('%s (%s / %s) %s%%' % (symbol, str(now_page_n), str(all_page_n), str(round(float(now_page_n) / all_page_n * 100, 1))))
+                #util.get_progress(now_page = i, all_page = all_page_n, logger = self.logger, spider_name = self.name, start_at = self.start_at)
 
             yield Request(url = url,
                     meta = {'symbol': symbol, 

@@ -50,7 +50,7 @@ ITEM_PIPELINES = {'crawler.pipelines.MongoPipeline': 100,
 DOWNLOADER_STATS = True
 COOKIES_ENABLED = True
 COOKIES_DEBUG = False
-COOKIES = [{'xq_a_token': 'aa415f337a2e55801aa4cae96c1a241036a66b36', 'xq_r_token': '1d8f7cd63e809422170265451b170b6a4d208837'}]
+COOKIES = [{'xq_a_token':'3969fd16dd914f6c971b3de472e41e7546d2e018', 'xq_r_token':'6b9452dfba4a11186bb6b657164fa2ae5515dc46'}]
 
 
 
@@ -75,7 +75,7 @@ LOG_FILE_PIPELINE = 'pipeline.log'
 # MongoDB settings
 MONGODB_HOST = 'localhost'
 MONGODB_PORT = 27017
-MONGODB_DBNAME = 'xueqiutest'
+MONGODB_DBNAME = 'XQ-2018-03'
 
 # Redis
 # Enables scheduling storing requests queue in redis.

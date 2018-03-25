@@ -17,7 +17,7 @@ class XQCubeRBSpider(Spider):
     logger = util.set_logger(name, LOG_FILE_CUBE_RB)
     #handle_httpstatus_list = [404]
 
-    cube_type = 'ZH'
+    cube_type = 'SP'
 
     def start_requests(self):
         zh_url = 'https://xueqiu.com/cubes/rebalancing/history.json?count=50&cube_symbol='
@@ -36,6 +36,8 @@ class XQCubeRBSpider(Spider):
         all_page_n = len(symbols)
         for i in range(all_page_n):
             symbol = symbols[i].strip()
+            now_page_n = i
+
             if self.cube_type == 'SP':
                 url = sp_url + symbol
             elif self.cube_type == 'ZH':
@@ -43,8 +45,8 @@ class XQCubeRBSpider(Spider):
 
             # 进度条
             if i%500==0:
-                self.logger.info('%s (%s / %s)' % (symbol, str(i), str(all_page_n)))
-                util.get_progress(now_page = i, all_page = all_page_n, logger = self.logger, spider_name = self.name, start_at = self.start_at)
+                self.logger.info('%s (%s / %s) %s%%' % (symbol, str(now_page_n), str(all_page_n), str(round(float(now_page_n) / all_page_n * 100, 1))))
+                #util.get_progress(now_page = i, all_page = all_page_n, logger = self.logger, spider_name = self.name, start_at = self.start_at)
 
             yield Request(url = url,
                       callback = self.parse, meta = {'cube_type':self.cube_type, 'symbol':symbol})
