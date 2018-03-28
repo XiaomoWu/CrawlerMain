@@ -1,0 +1,208 @@
+# -*- coding: utf-8 -*-
+
+# Scrapy settings for crawler project
+#
+# For simplicity, this file contains only settings considered important or
+# commonly used. You can find more settings consulting the documentation:
+#
+#     http://doc.scrapy.org/en/latest/topics/settings.html
+#     http://scrapy.readthedocs.org/en/latest/topics/downloader-middleware.html
+#     http://scrapy.readthedocs.org/en/latest/topics/spider-middleware.html
+
+BOT_NAME = 'CrawlerPrice'
+
+SPIDER_MODULES = ['crawler.spiders']
+NEWSPIDER_MODULE = 'crawler.spiders'
+
+LOG_FILE_MMB = 'C:/Crawler/CrawlerPrice/log-MMB.log'
+LOG_FILE_PIPELINE = 'C:/Crawler/CrawlerPrice/log-Pipeline.log'
+LOG_FORMAT = '%(asctime)s [%(name)s] %(levelname)s: %(message)s'
+#LOG_ENABLED = True
+LOG_STDOUT = True
+LOG_LEVEL = 'INFO'
+
+# Crawl responsibly by identifying yourself (and your website) on the user-agent
+USER_AGENTS = [
+    "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1; AcooBrowser; .NET CLR 1.1.4322; .NET CLR 2.0.50727)",
+    "Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 6.0; Acoo Browser; SLCC1; .NET CLR 2.0.50727; Media Center PC 5.0; .NET CLR 3.0.04506)",
+    "Mozilla/4.0 (compatible; MSIE 7.0; AOL 9.5; AOLBuild 4337.35; Windows NT 5.1; .NET CLR 1.1.4322; .NET CLR 2.0.50727)",
+    "Mozilla/5.0 (Windows; U; MSIE 9.0; Windows NT 9.0; en-US)",
+    "Mozilla/5.0 (compatible; MSIE 9.0; Windows NT 6.1; Win64; x64; Trident/5.0; .NET CLR 3.5.30729; .NET CLR 3.0.30729; .NET CLR 2.0.50727; Media Center PC 6.0)",
+    "Mozilla/5.0 (compatible; MSIE 8.0; Windows NT 6.0; Trident/4.0; WOW64; Trident/4.0; SLCC2; .NET CLR 2.0.50727; .NET CLR 3.5.30729; .NET CLR 3.0.30729; .NET CLR 1.0.3705; .NET CLR 1.1.4322)",
+    "Mozilla/4.0 (compatible; MSIE 7.0b; Windows NT 5.2; .NET CLR 1.1.4322; .NET CLR 2.0.50727; InfoPath.2; .NET CLR 3.0.04506.30)",
+    "Mozilla/5.0 (Windows; U; Windows NT 5.1; zh-CN) AppleWebKit/523.15 (KHTML, like Gecko, Safari/419.3) Arora/0.3 (Change: 287 c9dfb30)",
+    "Mozilla/5.0 (X11; U; Linux; en-US) AppleWebKit/527+ (KHTML, like Gecko, Safari/419.3) Arora/0.6",
+    "Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.1.2pre) Gecko/20070215 K-Ninja/2.1.1",
+    "Mozilla/5.0 (Windows; U; Windows NT 5.1; zh-CN; rv:1.9) Gecko/20080705 Firefox/3.0 Kapiko/3.0",
+    "Mozilla/5.0 (X11; Linux i686; U;) Gecko/20070322 Kazehakase/0.4.5",
+    "Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.0.8) Gecko Fedora/1.9.0.8-1.fc10 Kazehakase/0.5.6",
+    "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/535.11 (KHTML, like Gecko) Chrome/17.0.963.56 Safari/535.11",
+    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_7_3) AppleWebKit/535.20 (KHTML, like Gecko) Chrome/19.0.1036.7 Safari/535.20",
+    "Opera/9.80 (Macintosh; Intel Mac OS X 10.6.8; U; fr) Presto/2.9.168 Version/11.52",
+]
+# Obey robots.txt rules
+ROBOTSTXT_OBEY = True
+
+
+# Configure maximum concurrent requests performed by Scrapy (default: 16)
+#CONCURRENT_REQUESTS = 32
+
+# Configure a delay for requests for the same website (default: 0)
+# See http://scrapy.readthedocs.org/en/latest/topics/settings.html#download-delay
+# See also autothrottle settings and docs
+#DOWNLOAD_DELAY = 3
+# The download delay setting will honor only one of:
+#CONCURRENT_REQUESTS_PER_DOMAIN = 16
+#CONCURRENT_REQUESTS_PER_IP = 16
+
+# Disable cookies (enabled by default)
+COOKIES_ENABLED = True
+
+# Disable Telnet Console (enabled by default)
+#TELNETCONSOLE_ENABLED = False
+
+# Override the default request headers:
+#DEFAULT_REQUEST_HEADERS = {
+#   'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+#   'Accept-Language': 'en',
+#}
+
+# Enable or disable spider middlewares
+# See http://scrapy.readthedocs.org/en/latest/topics/spider-middleware.html
+#SPIDER_MIDDLEWARES = {
+#    'crawler.middlewares.CrawlerSpiderMiddleware': 543,
+#}
+
+# Enable or disable downloader middlewares
+# See http://scrapy.readthedocs.org/en/latest/topics/downloader-middleware.html
+DOWNLOADER_MIDDLEWARES = {
+    'crawler.middleware.RandomRequestHeaders': 100,
+    'scrapy.downloadermiddlewares.redirect.RedirectMiddleware':201,
+    'scrapy.downloadermiddlewares.cookies.CookiesMiddleware': None,
+    'scrapy.downloadermiddlewares.retry.RetryMiddleware': 100,
+    'crawler.HttpProxyMiddleware.HttpProxyMiddleware' : None,
+    'scrapy.downloadermiddlewares.httpproxy.HttpProxyMiddleware': None,
+}
+
+REDIRECT_ENABLE = True
+# Download delay
+DOWNLOAD_DELAY = 0
+
+# Enable or disable extensions
+# See http://scrapy.readthedocs.org/en/latest/topics/extensions.html
+#EXTENSIONS = {
+#    'scrapy.extensions.telnet.TelnetConsole': None,
+#}
+
+# Configure item pipelines
+# See http://scrapy.readthedocs.org/en/latest/topics/item-pipeline.html
+ITEM_PIPELINES =   {
+    'crawler.pipelines.MongoPipeline': 300,
+    'scrapy_redis.pipelines.RedisPipeline': 301,
+}
+
+# Cookies settings
+DOWNLOADER_STATS = True
+COOKIES_ENABLED = True
+COOKIES_DEBUG = True
+
+
+COOKIES = [{'ASP.NET_SessionId':'ldi0nc55e3pcsp3mdzz0nl55', 'yd_cookie':'923617f6-6a8d-42956b4e5d4238dd4c0dc558950e03c1da56	', 'COMPARE_COOKIE':'%7B%22c%22%3A0%2C%22s%22%3A0%2C%22l%22%3A%5B%5D%7D'}]
+
+
+
+# Enable and configure the AutoThrottle extension (disabled by default)
+# See http://doc.scrapy.org/en/latest/topics/autothrottle.html
+#AUTOTHROTTLE_ENABLED = True
+# The initial download delay
+#AUTOTHROTTLE_START_DELAY = 5
+# The maximum download delay to be set in case of high latencies
+#AUTOTHROTTLE_MAX_DELAY = 60
+# The average number of requests Scrapy should be sending in parallel to
+# each remote server
+#AUTOTHROTTLE_TARGET_CONCURRENCY = 1.0
+# Enable showing throttling stats for every response received:
+#AUTOTHROTTLE_DEBUG = False
+
+# Enable and configure HTTP caching (disabled by default)
+# See http://scrapy.readthedocs.org/en/latest/topics/downloader-middleware.html#httpcache-middleware-settings
+#HTTPCACHE_ENABLED = True
+#HTTPCACHE_EXPIRATION_SECS = 0
+#HTTPCACHE_DIR = 'httpcache'
+#HTTPCACHE_IGNORE_HTTP_CODES = []
+#HTTPCACHE_STORAGE = 'scrapy.extensions.httpcache.FilesystemCacheStorage'
+
+MONGODB_HOST = 'localhost'
+MONGODB_PORT = 27017
+MONGODB_DBNAME = 'Price'
+
+# Redis
+# Enables scheduling storing requests queue in redis.
+SCHEDULER = "scrapy_redis.scheduler.Scheduler"
+
+# Ensure all spiders share same duplicates filter through redis.
+DUPEFILTER_CLASS = "scrapy_redis.dupefilter.RFPDupeFilter"
+
+# Default requests serializer is pickle, but it can be changed to any module
+# with loads and dumps functions. Note that pickle is not compatible between
+# python versions.
+# Caveat: In python 3.x, the serializer must return strings keys and support
+# bytes as values. Because of this reason the json or msgpack module will not
+# work by default. In python 2.x there is no such issue and you can use
+# 'json' or 'msgpack' as serializers.
+#SCHEDULER_SERIALIZER = "scrapy_redis.picklecompat"
+
+# Don't cleanup redis queues, allows to pause/resume crawls.
+SCHEDULER_PERSIST = True
+
+#Whether to flush redis queue on start
+SCHEDULER_FLUSH_ON_START = True
+
+# Schedule requests using a priority queue. (default)
+#SCHEDULER_QUEUE_CLASS = 'scrapy_redis.queue.PriorityQueue'
+
+# Alternative queues.
+#SCHEDULER_QUEUE_CLASS = 'scrapy_redis.queue.FifoQueue'
+#SCHEDULER_QUEUE_CLASS = 'scrapy_redis.queue.LifoQueue'
+
+# Max idle time to prevent the spider from being closed when distributed crawling.
+# This only works if queue class is SpiderQueue or SpiderStack,
+# and may also block the same time when your spider start at the first time (because the queue is empty).
+#SCHEDULER_IDLE_BEFORE_CLOSE = 10
+
+# Store scraped item in redis for post-processing.
+#ITEM_PIPELINES = {
+#    'scrapy_redis.pipelines.RedisPipeline': 300
+#}
+
+# The item pipeline serializes and stores the items in this redis key.
+#REDIS_ITEMS_KEY = '%(spider)s:items'
+
+# The items serializer is by default ScrapyJSONEncoder. You can use any
+# importable path to a callable object.
+#REDIS_ITEMS_SERIALIZER = 'json.dumps'
+
+# Specify the host and port to use when connecting to Redis (optional).
+REDIS_HOST = 'localhost'
+REDIS_PORT = 6379
+
+# Specify the full Redis URL for connecting (optional).
+# If set, this takes precedence over the REDIS_HOST and REDIS_PORT settings.
+#REDIS_URL = 'redis://user:pass@hostname:9001'
+
+# Custom redis client parameters (i.e.: socket timeout, etc.)
+#REDIS_PARAMS  = {}
+# Use custom redis client class.
+#REDIS_PARAMS['redis_cls'] = 'myproject.RedisClient'
+
+# If True, it uses redis' ``SPOP`` operation. You have to use the ``SADD``
+# command to add URLs to the redis queue. This could be useful if you
+# want to avoid duplicates in your start urls list and the order of
+# processing does not matter.
+#REDIS_START_URLS_AS_SET = False
+
+# Default start urls key for RedisSpider and RedisCrawlSpider.
+#REDIS_START_URLS_KEY = '%(name)s:start_urls'
+
+# Use other encoding than utf-8 for redis.
+#REDIS_ENCODING = 'latin1'

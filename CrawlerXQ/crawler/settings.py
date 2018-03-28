@@ -50,7 +50,13 @@ ITEM_PIPELINES = {'crawler.pipelines.MongoPipeline': 100,
 DOWNLOADER_STATS = True
 COOKIES_ENABLED = True
 COOKIES_DEBUG = False
-COOKIES = [{'xq_a_token':'3969fd16dd914f6c971b3de472e41e7546d2e018', 'xq_r_token':'6b9452dfba4a11186bb6b657164fa2ae5515dc46'}]
+COOKIES = [{'xq_a_token':'d20e94216ea0ba29e77b25dd2176441247ed1a33', 
+    'xq_a_token.sig': 'J81rjbdOfpKnyLcmX5oHH7UF_v4',
+ 'xq_r_token':'5fdd6f0c37345cf7a2caa9a84b56814126bb4a66',
+    'xq_r_token.sig': 'i6p4X-DxKdyVCzurNXvL7FhKBMk',   
+    'xq_is_login.sig': 'J3LxgPVPUzbBg3Kee_PquUfih7Q',
+    'xq_token_expire': 'Mon%20Apr%2016%202018%2022%3A10%3A46%20GMT%2B0800%20(CST)'
+}]
 
 
 
