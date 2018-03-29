@@ -50,12 +50,9 @@ ITEM_PIPELINES = {'crawler.pipelines.MongoPipeline': 100,
 DOWNLOADER_STATS = True
 COOKIES_ENABLED = True
 COOKIES_DEBUG = False
-COOKIES = [{'xq_a_token':'d20e94216ea0ba29e77b25dd2176441247ed1a33', 
-    'xq_a_token.sig': 'J81rjbdOfpKnyLcmX5oHH7UF_v4',
- 'xq_r_token':'5fdd6f0c37345cf7a2caa9a84b56814126bb4a66',
-    'xq_r_token.sig': 'i6p4X-DxKdyVCzurNXvL7FhKBMk',   
-    'xq_is_login.sig': 'J3LxgPVPUzbBg3Kee_PquUfih7Q',
-    'xq_token_expire': 'Mon%20Apr%2016%202018%2022%3A10%3A46%20GMT%2B0800%20(CST)'
+COOKIES = [{
+    'xq_a_token': '229a3a53d49b5d0078125899e528279b0e54b5fe',
+    'xq_r_token': '8a43eb9046efe1c0a8437476082dc9aac6db2626'
 }]
 
 
@@ -131,7 +128,7 @@ REDIS_HOST = 'localhost'
 REDIS_PORT = 6379
 
 #Whether to flush redis queue on start
-SCHEDULER_FLUSH_ON_START = True
+SCHEDULER_FLUSH_ON_START = False
 
 # Specify the full Redis URL for connecting (optional).
 # If set, this takes precedence over the REDIS_HOST and REDIS_PORT settings.
