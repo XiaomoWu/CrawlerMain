@@ -10,7 +10,6 @@ import json
 import re
 
 
-
 class XQCubeRBSpider(Spider):
     start_at=datetime.now()
     name = 'xq_cube_rb_updt'
@@ -51,6 +50,10 @@ class XQCubeRBSpider(Spider):
             yield Request(url = url,
                       callback = self.parse, meta = {'cube_type':self.cube_type, 'symbol':symbol})
 
+        #yield Request(url = "https://xueqiu.com/service/tc/snowx/PAMID/cubes/rebalancing/history?count=20&cube_symbol=SP1013930",
+        #              callback = self.parse, meta = {'cube_type':self.cube_type, 'symbol':symbol})
+
+
     def parse(self, response):
         try:
             #print(response.url)
@@ -77,6 +80,7 @@ class XQCubeRBSpider(Spider):
 
         except Exception as ex:
             self.logger.error('Parse Exception: %s %s' % (str(ex), response.url))
+            self.logger.info(str(response.body))
 
     def parse_rb(self, response):
         try:
@@ -94,5 +98,6 @@ class XQCubeRBSpider(Spider):
                     yield item
         except Exception as ex:
             self.logger.warn('Parse Exception: %s %s' % (str(ex), response.url))
+            self.logger.info(body)
 
 

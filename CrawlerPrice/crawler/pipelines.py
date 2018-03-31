@@ -13,6 +13,7 @@ import logging
 
 class MongoPipeline(object):
     def __init__(self):
+
         # set logger
         self.logger = util.set_logger('pipeline', LOG_FILE_PIPELINE)
 
@@ -22,7 +23,6 @@ class MongoPipeline(object):
         # 建立redis server
         self.redis_server = util.set_redis_server()
 
-    
     def process_item(self, item, spider):
         #try:
         #    # 如果item又有content又有fp，正常处理
@@ -43,7 +43,12 @@ class MongoPipeline(object):
                 if type(content) == dict:
                     self.db[spider.name].insert(content)
                 else:
-                    self.logger.warn('Pipeline Error (unknown content type): %s %s' % (spider.name, str(type(content)), item['url']))
+                    self.logger.warn('Pipeline Error, unkown item["content"] type: %s %s %s' % (spider.name, str(type(content)), item['url']))
 
         except Exception as ex:
-            self.logger.warn('Pipeline Error (others): %s %s' % (str(ex),  str(item['url'])))
+            self.logger.warn('Pipeline Error (others): %s %s' % (str(ex),  str(item)))
+
+a = 1
+for i in range(10):
+    a = a + 1
+a

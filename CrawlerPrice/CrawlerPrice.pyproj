@@ -4,13 +4,14 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>edf7223e-5fc0-4e53-86ee-543f510e84de</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>crawler\spiders\mmb.py</StartupFile>
+    <StartupFile>run_crawler.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
     <OutputPath>.</OutputPath>
     <Name>CrawlerPrice</Name>
     <RootNamespace>CrawlerPrice</RootNamespace>
+    <InterpreterId>MSBuild|env|$(MSBuildProjectFullPath)</InterpreterId>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <DebugSymbols>true</DebugSymbols>
@@ -35,13 +36,24 @@
     <Compile Include="crawler\spiders\mmb.py">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="crawler\spiders\mmb_item.py">
+    <Compile Include="crawler\spiders\mmb_hist.py">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="crawler\spiders\util.py" />
     <Compile Include="crawler\spiders\__init__.py" />
     <Compile Include="crawler\__init__.py" />
     <Compile Include="run_crawler.py" />
+  </ItemGroup>
+  <ItemGroup>
+    <Interpreter Include="..\env\">
+      <Id>env</Id>
+      <Version>3.6</Version>
+      <Description>env (Python 3.6 (64-bit))</Description>
+      <InterpreterPath>Scripts\python.exe</InterpreterPath>
+      <WindowsInterpreterPath>Scripts\pythonw.exe</WindowsInterpreterPath>
+      <PathEnvironmentVariable>PYTHONPATH</PathEnvironmentVariable>
+      <Architecture>X64</Architecture>
+    </Interpreter>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
   <!-- Uncomment the CoreCompile target to enable the Build command in
