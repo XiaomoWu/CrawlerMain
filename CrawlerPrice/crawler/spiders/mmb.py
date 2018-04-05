@@ -6,7 +6,6 @@ from scrapy.utils.request import request_fingerprint
 from crawler.items import PriceItem
 from crawler.settings import *
 from datetime import datetime, timedelta
-import json
 import time
 import pymongo
 import re, os   
@@ -20,7 +19,7 @@ class MMBSpider(Spider):
     #handle_httpstatus_list = [404]
     #website_possible_httpstatus_list = [404]
 
-
+    print("here")
     def start_requests(self): 
         start_url = 'http://home.manmanbuy.com/bijia.aspx'
         yield Request(url = start_url, callback = self.parse)
@@ -56,15 +55,15 @@ class MMBSpider(Spider):
                 cat2_url = node.xpath('@href').extract()[0]
                 item['content']['cat2_url'] = cat2_url
 
-                #if "book" not in cat2_url:
-                #    yield Request(url = cat2_url, meta = {'item':item}, callback = self.parse_item_list)
+                # 带有 book 的 url 是图书比价，排除
+                if "book" not in cat2_url:
+                    yield Request(url = cat2_url, meta = {'item':item}, callback = self.parse_item_list)
 
-        yield Request(url = "http://www.manmanbuy.com/list_1758.aspx", meta = {'item':item}, callback = self.parse_item_list)
+        #yield Request(url = "http://www.manmanbuy.com/list_1758.aspx", meta = {'item':item}, callback = self.parse_item_list)
 
     # parse_item_list 用来抓价格
     def parse_item_list(self, response):
         item_list = response.xpath('//div[contains(@class, "item")]')
-        print(len(item_list))
 
         for item_node in item_list:
             # 如果有 price 这个节点才抓
@@ -103,23 +102,33 @@ class MMBSpider(Spider):
 
                 # item_price_multiple 是一个 flag，“0”表示“单一价格”（此时html具有节点 span[@class="pricedanjia"]），“1”表示“多个价格”（此时 html 具有 font[@class="pricestart"]）节点。
                 # 如果不在上述情况中，打印错误：Unkown price status
-                if len(item_node.xpath('div[contains(@class, "price")]//span[contains(@class, "pricestart")]')) == 1: # 多家在售
-                    item_price_multiple = True
-                    # spid：只有“多家在售”的商品才有 spid，一个 spid 可能对应多个 bjid；“一家在售”的商品只有 bjid，无 spid。
-                    item_spid = re.search("p_(.+?)\.asp", item_url).group(1).strip()
-                    item['content']['spid'] = item_spid
+                try:
+                    if len(item_node.xpath('div[contains(@class, "price")]//span[contains(@class, "pricestart")]')) == 1: # 多家在售
+                        item_price_multiple = True
+                        # spid：只有“多家在售”的商品才有 spid，一个 spid 可能对应多个 bjid；“一家在售”的商品只有 bjid，无 spid。
+                        item_spid = re.search("p_(.+?)\.asp", item_url).group(1).strip()
+                        item['content']['spid'] = item_spid
 
-                elif len(item_node.xpath('div[contains(@class, "price")]//font[contains(@class, "pricedanjia")]')) == 1: # 一家在售
-                        item_price_multiple = False
+                    elif len(item_node.xpath('div[contains(@class, "price")]//font[contains(@class, "pricedanjia")]')) == 1: # 一家在售
+                            item_price_multiple = False
 
-                        # 对于只有一家在售的商店，直接从 item_list 中提取 bjid
-                        item_price_bjid = item_node.xpath('div[contains(@class, "price")]//a/@href').extract()[0]
-                        item_price_bjid = re.search("bjid=(.+)&", item_price_bjid).group(1).strip()
-                        item['content']['bjid'] = item_price_bjid
-                else:
-                    item_price_multiple = None
-                    self.logger.info("Unknown Price Status")
-                item['content']["price_multiple"] = item_price_multiple
+                            # 对于只有一家在售的商店，直接从 item_list 中提取 bjid
+                            item_price_bjid = item_node.xpath('div[contains(@class, "price")]//a/@href').extract()[0]
+                            m = re.search("bjid=(.+)&", item_price_bjid)
+                            if m:
+                                item_price_bjid = m.group(1).strip()
+                            else:
+                                self.logger.warn("bjid NOT found,", item_price_bjid, response.url)
+                            item['content']['bjid'] = item_price_bjid
+
+                    else:
+                        item_price_multiple = None
+                        self.logger.info("Unknown Price Status")
+
+                    item['content']["price_multiple"] = item_price_multiple
+
+                except Exception as ex:
+                    self.logger.error('Parse Exception - MMB.parse.[@class=pricedanjia]: %s %s' % (str(ex), response.url))
 
                 # 历史价格
                 # item_price_multiple == False，那么直接在列表页就抓取历史价格
@@ -144,4 +153,3 @@ class MMBSpider(Spider):
         if len(next_page) > 0:
             next_page = "http://manmanbuy.com/" + next_page[0]
             yield Request(url = next_page, callback = self.parse_item_list)
-

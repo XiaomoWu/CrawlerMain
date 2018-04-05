@@ -32,19 +32,10 @@ class MongoPipeline(object):
             if "content" in item:
                 #判断 item['content'] 是否是 dict 
                 content = item['content']
-                if type(content) == dict:
-                    self.db[spider.name].insert(content)
-                elif type(content) == unicode:
-                    content = json.loads(content)
-                    self.db[spider.name].insert(content)
+                if type(content) == list:
+                    self.db[spider.name].insert_many(content)
                 else:
                     self.logger.warn('Pipeline Error (unknown content type): %s %s' % (spider.name, str(type(content)), item['url']))
 
         except Exception as ex:
-            self.logger.warn('Pipeline Error (others): %s %s' % (str(ex),  str(item['url'])))
-
-        
-
-
-
-
+            self.logger.warn('Pipeline Error (others): %s %s' % (str(ex), item))

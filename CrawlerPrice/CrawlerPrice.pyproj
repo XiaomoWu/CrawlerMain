@@ -11,7 +11,7 @@
     <OutputPath>.</OutputPath>
     <Name>CrawlerPrice</Name>
     <RootNamespace>CrawlerPrice</RootNamespace>
-    <InterpreterId>MSBuild|env|$(MSBuildProjectFullPath)</InterpreterId>
+    <InterpreterId>MSBuild|env|C:\Users\rossz\OneDrive\App\Crawler\CrawlerMain\CrawlerXQ\CrawlerXQ.pyproj</InterpreterId>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <DebugSymbols>true</DebugSymbols>
@@ -33,6 +33,7 @@
     <Compile Include="crawler\middleware.py" />
     <Compile Include="crawler\pipelines.py" />
     <Compile Include="crawler\settings.py" />
+    <Compile Include="crawler\HttpProxyMiddleware.py" />
     <Compile Include="crawler\spiders\mmb.py">
       <SubType>Code</SubType>
     </Compile>
@@ -45,15 +46,8 @@
     <Compile Include="run_crawler.py" />
   </ItemGroup>
   <ItemGroup>
-    <Interpreter Include="..\env\">
-      <Id>env</Id>
-      <Version>3.6</Version>
-      <Description>env (Python 3.6 (64-bit))</Description>
-      <InterpreterPath>Scripts\python.exe</InterpreterPath>
-      <WindowsInterpreterPath>Scripts\pythonw.exe</WindowsInterpreterPath>
-      <PathEnvironmentVariable>PYTHONPATH</PathEnvironmentVariable>
-      <Architecture>X64</Architecture>
-    </Interpreter>
+    <InterpreterReference Include="Global|PythonCore|3.6" />
+    <InterpreterReference Include="MSBuild|env|C:\Users\rossz\OneDrive\App\Crawler\CrawlerMain\CrawlerXQ\CrawlerXQ.pyproj" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
   <!-- Uncomment the CoreCompile target to enable the Build command in

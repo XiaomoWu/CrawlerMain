@@ -24,31 +24,17 @@ class MongoPipeline(object):
         self.redis_server = util.set_redis_server()
 
     def process_item(self, item, spider):
-        #try:
-        #    # 如果item又有content又有fp，正常处理
-        #    if "content" in item:
-        #        #判断 item['content'] 是否是 dict 
-        #        content = item['content']
-        #        if type(content) == dict:
-        #            self.db[spider.name].insert(content)
-        #        elif type(content) == unicode:
-        #            content = json.loads(content)
-        #            self.db[spider.name].insert(content)
-        #        else:
-        #            self.logger.warn('Pipeline Error (unknown content type): %s %s' % (spider.name, str(type(content)), item['url']))
-
         try:
             if "content" in item:
                 content = item['content']
-                if type(content) == dict:
-                    self.db[spider.name].insert(content)
+                # type(MMB) = dict ; type(MMBHist) = list
+                if type(content) == list:
+                    self.db[spider.name].insert_many(content)
+                elif type(content) == dict:
+                    self.db[spider.name].insert_one(content)
                 else:
                     self.logger.warn('Pipeline Error, unkown item["content"] type: %s %s %s' % (spider.name, str(type(content)), item['url']))
 
         except Exception as ex:
-            self.logger.warn('Pipeline Error (others): %s %s' % (str(ex),  str(item)))
+            self.logger.warn('Pipeline Error (others): %s %s' % (str(ex),  str(item['content'])))
 
-a = 1
-for i in range(10):
-    a = a + 1
-a

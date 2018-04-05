@@ -49,13 +49,11 @@ ITEM_PIPELINES = {'crawler.pipelines.MongoPipeline': 100,
 # Cookies settings
 DOWNLOADER_STATS = True
 COOKIES_ENABLED = True
-COOKIES_DEBUG = True
+COOKIES_DEBUG = False
 COOKIES = [{
-    's': 'ec118qp5kk',
-    'aliyungf_tc': 'AQAAABPlISMVfgQAOaKdt4choweArSQk',
-    'bid': '2e32a13ca30b0af7115fd79c92f4f05d_j32pe00p',
-    'xq_a_token': '229a3a53d49b5d0078125899e528279b0e54b5fe', 
-    'xq_r_token': '8a43eb9046efe1c0a8437476082dc9aac6db2626	'}]
+    'xq_a_token': '229a3a53d49b5d0078125899e528279b0e54b5fe',
+    'xq_r_token': '8a43eb9046efe1c0a8437476082dc9aac6db2626'
+}]
 
 
 

@@ -14,10 +14,12 @@ BOT_NAME = 'CrawlerPrice'
 SPIDER_MODULES = ['crawler.spiders']
 NEWSPIDER_MODULE = 'crawler.spiders'
 
+# Log
 LOG_FILE_MMB = 'log-MMB.log'
 LOG_FILE_PIPELINE = 'log-Pipeline.log'
+LOG_FILE_PROXY = 'log-Proxy.log'
 LOG_FORMAT = '%(asctime)s [%(name)s] %(levelname)s: %(message)s'
-#LOG_ENABLED = True
+LOG_ENABLED = True
 LOG_STDOUT = True
 LOG_LEVEL = 'INFO'
 
@@ -41,16 +43,21 @@ USER_AGENTS = [
     "Opera/9.80 (Macintosh; Intel Mac OS X 10.6.8; U; fr) Presto/2.9.168 Version/11.52",
 ]
 
-# Enable or disable downloader middlewares
-# See http://scrapy.readthedocs.org/en/latest/topics/downloader-middleware.html
+# Downloader Middleware
 DOWNLOADER_MIDDLEWARES = {
     'crawler.middleware.RandomRequestHeaders': 100,
-    'scrapy.downloadermiddlewares.redirect.RedirectMiddleware':201,
-    'scrapy.downloadermiddlewares.cookies.CookiesMiddleware': None,
-    'scrapy.downloadermiddlewares.retry.RetryMiddleware': 100,
-    'crawler.HttpProxyMiddleware.HttpProxyMiddleware' : None,
+    'scrapy.downloadermiddlewares.redirect.RedirectMiddleware': 201,
+    'scrapy.downloadermiddlewares.retry.RetryMiddleware': 203,
+    'crawler.middleware.CustomHttpProxyMiddleware': 206,
+    'crawler.middleware.CustomRetryMiddleware': 211,
     'scrapy.downloadermiddlewares.httpproxy.HttpProxyMiddleware': None,
 }
+
+# Retry
+RETRY_ENABLED = True
+RETRY_TIMES = 5
+RETRY_HTTP_CODES = [500, 502, 503, 504, 403, 408, 460] # retry when 460
+
 
 # Redirect
 REDIRECT_ENABLE = True
@@ -69,9 +76,6 @@ DOWNLOADER_STATS = True
 COOKIES_ENABLED = False
 COOKIES_DEBUG = True
 
-COOKIES = [{'ASP.NET_SessionId': 'u4inpm45ouqc2k454wfwgejj',
-    'yd_cookie': '06baafff-c590-4fc524e86ab098f27612135830a8632533ef'}]
-
 # Don't follow robots.txt
 ROBOTSTXT_OBEY = False
 
@@ -83,11 +87,8 @@ MONGODB_DBNAME = 'OnlinePrice'
 # Redis
 SCHEDULER = "scrapy_redis.scheduler.Scheduler"
 DUPEFILTER_CLASS = "scrapy_redis.dupefilter.RFPDupeFilter"
-
 SCHEDULER_PERSIST = True
-
 SCHEDULER_FLUSH_ON_START = True
-
 REDIS_HOST = 'localhost'
 REDIS_PORT = 6379
 
