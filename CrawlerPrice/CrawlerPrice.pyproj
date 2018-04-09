@@ -33,11 +33,13 @@
     <Compile Include="crawler\middleware.py" />
     <Compile Include="crawler\pipelines.py" />
     <Compile Include="crawler\settings.py" />
-    <Compile Include="crawler\HttpProxyMiddleware.py" />
     <Compile Include="crawler\spiders\mmb.py">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="crawler\spiders\mmb_hist.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="crawler\spiders\test.py">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="crawler\spiders\util.py" />

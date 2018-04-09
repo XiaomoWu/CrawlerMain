@@ -19,7 +19,6 @@ class MMBSpider(Spider):
     #handle_httpstatus_list = [404]
     #website_possible_httpstatus_list = [404]
 
-    print("here")
     def start_requests(self): 
         start_url = 'http://home.manmanbuy.com/bijia.aspx'
         yield Request(url = start_url, callback = self.parse)
@@ -78,7 +77,11 @@ class MMBSpider(Spider):
 
                 # url
                 item_url = item_node.xpath('div[contains(@class, "name")]/a/@href').extract()[0]
-                item_url = "http://www.manmanbuy.com/"+item_url
+                # 如果url包含了http://www.manmanbuy.com，说明只有一个报价；如果类似p_32342.aspx，说明有多个报价
+                m = re.search("http://www.manmanbuy.com", item_url)
+                if not m:
+                    item_url = "http://www.manmanbuy.com/"+item_url
+
                 item['content']['url'] = item_url
 
                 # name
@@ -117,10 +120,9 @@ class MMBSpider(Spider):
                             m = re.search("bjid=(.+)&", item_price_bjid)
                             if m:
                                 item_price_bjid = m.group(1).strip()
-                            else:
-                                self.logger.warn("bjid NOT found,", item_price_bjid, response.url)
-                            item['content']['bjid'] = item_price_bjid
-
+                                item['content']['bjid'] = item_price_bjid
+                            #else:
+                            #    self.logger.warn("bjid NOT found\n%s\n%s" % (item_price_bjid, response.url))
                     else:
                         item_price_multiple = None
                         self.logger.info("Unknown Price Status")

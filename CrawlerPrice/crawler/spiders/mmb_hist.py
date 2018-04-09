@@ -21,21 +21,20 @@ import copy
 class MMBHistSpider(Spider):
     name = 'MMBHist'
     logger = util.set_logger(name, LOG_FILE_MMB)
+    handle_httpstatus_list = [404, 460, 504]
     db = util.set_mongo_server()
 
     # false：一家在售
     # true：多家在售
     if_crawl_price_multiple_item = True
 
-    #handle_httpstatus_list = [404]
-    #website_possible_httpstatus_list = [404]
 
     def start_requests(self): 
 
         #“一家在售”的商品
         if self.if_crawl_price_multiple_item == False:
             bjids = []
-            for id in self.db["MMB"].find({'price_multiple': False}, {'bjid': 1, '_id': 0}):
+            for id in self.db["MMB"].find({'bjid': {'$exists': True}}, {'bjid': 1, '_id': 0}):
                 bjids.append(id['bjid'])
             bjids = list(set(bjids))
 
@@ -57,9 +56,14 @@ class MMBHistSpider(Spider):
         # “多家在售”的商品
         if self.if_crawl_price_multiple_item == True:
             p_infos = []
-            for u in self.db["MMB"].find({'price_multiple': True}, {'url': 1, 'spid': 1, 'name': 1, '_id': 0}):
-                p_infos.append(u)
-
+            # 挑出spid, name, url 不重复的记录
+            pipeline = [
+                {'$match':{'bjid':{'$exists':False}}},
+                {'$group': {'_id': {'spid': '$spid', 'name': '$name', 'url': '$url'}}},
+            ]
+            cur = self.db.MMB.aggregate(pipeline)
+            for i in cur:
+                p_infos.append(i['_id'])
 
             all_page_n_mult = len(p_infos)
             for i in range(all_page_n_mult):
@@ -72,13 +76,12 @@ class MMBHistSpider(Spider):
                 if i%500==0:
                     self.logger.info('多家在售： (%s / %s) %s%%' % (str(now_page_n), str(all_page_n_mult), str(round(float(now_page_n) / all_page_n_mult * 100, 1))))
 
-                yield Request(url = url, meta = {"p_info":p_info, 'use_proxy':True}, callback = self.parse_mult)
+                yield Request(url = url, meta = {"p_info":p_info}, callback = self.parse_mult)
 
+            #yield Request(url = 'http://www.manmanbuy.com/pb_567731.aspx', meta = {"p_info":p_info}, callback = self.parse_mult)
 
     def parse_mult(self, response):
-
         try:
-
             if response.status == 200:
                 # 把上一步的 item 传进来
                 p_info = response.meta['p_info']
@@ -88,10 +91,13 @@ class MMBHistSpider(Spider):
 
                 # 解析同一个商品下的多家平台的链接
                 nodes = response.xpath('//div[contains(@class, "pro-mall-list")]//ul//li//div[contains(@class, "item ")]')
+
                 for n in nodes:
+                    #print(n.extract())
                     # 店铺名，不等于 siteName。例如同样siteName = 天猫。可以有sell_name = “vivo旗舰店”or “vivo天诚专卖店”
                     seller_name = n.xpath('div[contains(@class, "mall")]//text()').extract()
                     seller_name = ' '.join(' '.join(seller_name).split())
+                    print(seller_name)
             
                     # get skuid
                     skuid = n.xpath('@skuid').extract()[0]
@@ -108,13 +114,14 @@ class MMBHistSpider(Spider):
                     yield Request(url = url, meta = {"p_info":p_info}, callback = self.parse)
 
             else:
-                self.logger.error('HTTP status not 200: %s' % (response.url))  
+                self.logger.error('HTTP status not 200: %s \n %s' % (response.url, response.body))  
                 
         except Exception as ex:
             self.logger.error('Parse Exception - "parse_mult": %s %s' % (str(ex), response.url))
 
     def parse(self, response):
         try:
+            # 如果 200，按正常解析
             if response.status == 200:
                 # 把上一步的 item 传进来(如果有)
                 p_info = {}
@@ -128,45 +135,34 @@ class MMBHistSpider(Spider):
                 # 在p_info中添加产品基本信息
                 p_info.update({k: body[k] for k in ('siteName', 'siteId', 'zouShi', 'bjid', 'spName', 'spUrl', 'spbh', 'zouShi_test')})
 
-                # 当 response 的 currentPrice 为0 （可能是由于网络堵塞导致），停止解析，并进行retry
-                # b'{"siteId":0,"zouShi":0,"bjid":0,"lowerPrice":0,"lowerDate":"\\/Date(-62135596800000-0000)\\/","currentPrice":0,"changePriceCount":0,"zouShi_test":0,"runtime":0}
-                if body['currentPrice'] == 0:
-                    reason = 'Retry: currentPrice == 0'
-                    logger.warn(reason)
-                    logger.warn(response.request.url)
-                    oldmeta = response.request.meta
-                    oldmeta['retry'] = True
-                    yield Request(url = response.request.url, meta = oldmeta, callback = self.parse)
-                
-                else:
-                    # p_hist 只包含价格/日期
-                    p_hist = body['datePrice']
-                    p_hist = re.findall("\[(.+?)\]", p_hist)
+                # p_hist 只包含价格/日期
+                p_hist = body['datePrice']
+                p_hist = re.findall("\[(.+?)\]", p_hist)
 
-                    # 把价格list“展开”
-                    docs = []
-                    lastcrawl = datetime.datetime.utcnow()
-                    for p in p_hist:
-                        # date
-                        m = re.search("Date.UTC\((.+?)\),([\d\.]+)", p)
-                        if m:
-                            date = m.group(1)
-                            date = datetime.datetime.strptime(date, "%Y,%m,%d") - datetime.timedelta(hours = 8) # 把 strptime的结果转换成UTC
+                # 把价格list“展开”
+                docs = []
+                lastcrawl = datetime.datetime.utcnow()
+                for p in p_hist:
+                    # date
+                    m = re.search("Date.UTC\((.+?)\),([\d\.]+)", p)
+                    if m:
+                        date = m.group(1)
+                        date = datetime.datetime.strptime(date, "%Y,%m,%d") - datetime.timedelta(hours = 8) # 把 strptime的结果转换成UTC
                     
-                            # price
-                            price = float(m.group(2).strip())
+                        # price
+                        price = float(m.group(2).strip())
                         
-                            # create doc and add to docs
-                            doc = p_info
-                            doc.update({"date":date, "price":price, "lastcrawl":lastcrawl})
-                            docs.append(copy.deepcopy(doc))
+                        # create doc and add to docs
+                        doc = p_info
+                        doc.update({"date":date, "price":price, "lastcrawl":lastcrawl})
+                        docs.append(copy.deepcopy(doc))
 
-                    item = PriceItem()
-                    item['content'] = docs
-                    yield item
+                item = PriceItem()
+                item['content'] = docs
+                yield item
                     
             else:
-                self.logger.error('HTTP status not 200: %s' % (response.url))
+                self.logger.error('Got %s: %s' % (response.status, response.url))
 
         except Exception as ex:
             self.logger.error('Parse Exception - "parse": %s %s' % (str(ex), response.url))

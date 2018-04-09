@@ -1,11 +1,11 @@
-from datetime import datetime
-from crawler.settings import *
-from scrapy_redis.defaults import REDIS_CLS
+import redis
 import pymongo
 import logging
+from datetime import datetime
+from crawler.settings import *
 
 def set_redis_server():
-    redis_server = REDIS_CLS(host = REDIS_HOST, port = REDIS_PORT)
+    redis_server = redis.StrictRedis(host = REDIS_HOST, port = REDIS_PORT, db = REDIS_DB)
     return redis_server
 
 def set_mongo_server():

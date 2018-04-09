@@ -17,11 +17,11 @@ NEWSPIDER_MODULE = 'crawler.spiders'
 # Log
 LOG_FILE_MMB = 'log-MMB.log'
 LOG_FILE_PIPELINE = 'log-Pipeline.log'
-LOG_FILE_PROXY = 'log-Proxy.log'
+LOG_FILE_MIDDLEWARE = 'log-Middleware.log'
 LOG_FORMAT = '%(asctime)s [%(name)s] %(levelname)s: %(message)s'
 LOG_ENABLED = True
 LOG_STDOUT = True
-LOG_LEVEL = 'INFO'
+LOG_LEVEL = 'DEBUG'
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 USER_AGENTS = [
@@ -46,24 +46,25 @@ USER_AGENTS = [
 # Downloader Middleware
 DOWNLOADER_MIDDLEWARES = {
     'crawler.middleware.RandomRequestHeaders': 100,
-    'scrapy.downloadermiddlewares.redirect.RedirectMiddleware': 201,
-    'scrapy.downloadermiddlewares.retry.RetryMiddleware': 203,
-    'crawler.middleware.CustomHttpProxyMiddleware': 206,
-    'crawler.middleware.CustomRetryMiddleware': 211,
-    'scrapy.downloadermiddlewares.httpproxy.HttpProxyMiddleware': None,
+    'crawler.middleware.CustomRetryMiddleware': 501,
+    #'crawler.middleware.CustomHttpProxyMiddleware': 601,
+    'crawler.middleware.CustomHttpTunnelMiddleware': 602,
 }
 
-# Retry
-RETRY_ENABLED = True
-RETRY_TIMES = 5
-RETRY_HTTP_CODES = [500, 502, 503, 504, 403, 408, 460] # retry when 460
+# Conncurrent
+CONCURRENT_REQUESTS = 16
+DOWNLOAD_DELAY = 0.15
 
+# Disable default HttpProxyMiddleware
+HTTPPROXY_ENABLED = False
+
+# 启用默认的RetryMiddleware，用来retry特定http code的response
+RETRY_ENABLED = True 
+RETRY_TIMES = 3
+RETRY_HTTP_CODES = [500, 502, 503, 504, 408, 460]
 
 # Redirect
 REDIRECT_ENABLE = True
-
-# Download delay
-DOWNLOAD_DELAY = 0
 
 # Pipelines
 ITEM_PIPELINES =   {
@@ -85,11 +86,14 @@ MONGODB_PORT = 27017
 MONGODB_DBNAME = 'OnlinePrice'
 
 # Redis
-SCHEDULER = "scrapy_redis.scheduler.Scheduler"
 DUPEFILTER_CLASS = "scrapy_redis.dupefilter.RFPDupeFilter"
+SCHEDULER = "scrapy_redis.scheduler.Scheduler"
 SCHEDULER_PERSIST = True
 SCHEDULER_FLUSH_ON_START = True
+
 REDIS_HOST = 'localhost'
 REDIS_PORT = 6379
+REDIS_DB = 0
 
+PROXY_FLUSH_ON_START = False # 不要动！
 
