@@ -47,7 +47,6 @@ USER_AGENTS = [
 DOWNLOADER_MIDDLEWARES = {
     'crawler.middleware.RandomRequestHeaders': 100,
     'crawler.middleware.CustomRetryMiddleware': 501,
-    #'crawler.middleware.CustomHttpProxyMiddleware': 601,
     'crawler.middleware.CustomHttpTunnelMiddleware': 602,
 }
 
@@ -94,6 +93,4 @@ SCHEDULER_FLUSH_ON_START = True
 REDIS_HOST = 'localhost'
 REDIS_PORT = 6379
 REDIS_DB = 0
-
-PROXY_FLUSH_ON_START = False # 不要动！
 
