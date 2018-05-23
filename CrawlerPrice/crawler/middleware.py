@@ -22,7 +22,7 @@ from scrapy.downloadermiddlewares.retry import RetryMiddleware
 from scrapy.utils.response import response_status_message
 from twisted.web._newclient import ResponseNeverReceived
 from twisted.python.failure import Failure
-from twisted.internet.error import TimeoutError, ConnectionRefusedError, ConnectError, TCPTimedOutError
+from twisted.internet.error import TimeoutError, ConnectionRefusedError, ConnectError, TCPTimedOutError, ConnectionDone
 from crawler.spiders import util
 
 logger = util.set_logger("http_proxy_middleware", LOG_FILE_MIDDLEWARE)
@@ -56,7 +56,7 @@ class CustomRetryMiddleware(RetryMiddleware):
             body = re.sub('[\s]', '', response.body.decode('gbk'))
             body = json.loads(body)
             if body['currentPrice'] == 0:
-                reason = 'Retry: currentPrice == 0 %s' % response.url
+                reason = 'Retry: currentPrice is 0 %s' % response.url
                 logger.warn(reason)
                 return self._retry(request, reason, spider) or response
 
@@ -81,6 +81,8 @@ class CustomHttpTunnelMiddleware(object):
         new_request.headers["Proxy-Authorization"] = self.proxy_auth
         new_request.dont_filter = True
         logger.debug("Use proxy to request %s" % new_request.url)
+        new_request.priority = new_request.priority + RETRY_PRIORITY_ADJUST
+        time.sleep(HTTPPROXY_DELAY)
         return new_request
 
     def process_request(self, request, spider):
@@ -92,15 +94,26 @@ class CustomHttpTunnelMiddleware(object):
     def process_response(self, request, response, spider):
         # 如果被ban，启用代理
         if response.url == "http://www.manmanbuy.com/404.html":
-            logger.debug("Banned when requesting %s" % request.url)        
-            return add_proxy(request)
+            logger.debug("Banned when requesting %s, use proxy now" % request.url)        
+            return self.add_proxy(request)
             
         # 如果代理API请求太频繁，重新请求
         if response.status in [429]:
-            logger.info("%s Request too frequently! Please slow down!" % response.status)
-            return add_proxy(reqeust)
+            logger.info("%s Please slow down!" % response.status)
+            return self.add_proxy(request)
 
         # response正常，进入后续处理
         return response
 
+
+    def process_exception(self, request, exception, spider):
+        DONT_RETRY_ERRORS = (TimeoutError, ConnectionRefusedError, ResponseNeverReceived, ConnectError, ValueError, TCPTimedOutError, ConnectionDone)
+
+        if isinstance(exception, (ConnectionDone)):
+            logger.info("Error: ConnectionDone")
+            return self.add_proxy(request)
+
+        if isinstance(exception, DONT_RETRY_ERRORS):
+            logger.info("Middleware Exception %s, %s" % (request.url, exception))
+            return self.add_proxy(request)
 

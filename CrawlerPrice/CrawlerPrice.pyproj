@@ -48,7 +48,6 @@
     <Compile Include="run_crawler.py" />
   </ItemGroup>
   <ItemGroup>
-    <InterpreterReference Include="Global|PythonCore|3.6" />
     <InterpreterReference Include="MSBuild|env|C:\Users\rossz\OneDrive\App\Crawler\CrawlerMain\CrawlerXQ\CrawlerXQ.pyproj" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />

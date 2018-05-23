@@ -41,3 +41,9 @@ def flatten(d, parent_key='', sep='_'):
         else:
             items.append((new_key, v))
     return dict(items)
+
+# 生成当天的字符串时间，例如"2018_04_14"
+def make_date_str():
+    today = datetime.today().strftime("%Y_%m_%d")
+    return today
+    

@@ -14,7 +14,8 @@ import copy
 
 
 class MMBSpider(Spider):
-    name = 'MMB'
+
+    name = 'MMB_' + util.make_date_str()
     logger = util.set_logger(name, LOG_FILE_MMB)
     #handle_httpstatus_list = [404]
     #website_possible_httpstatus_list = [404]

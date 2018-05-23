@@ -1,11 +1,9 @@
-
 from scrapy.spiders import Spider
-from crawler.spiders import util
 from scrapy.selector import Selector
 from scrapy import Request
-from scrapy.utils.request import request_fingerprint
-from crawler.items import PriceItem
+from crawler.spiders import util
 from crawler.settings import *
+from crawler.items import PriceItem
 import json
 import time
 import pymongo
@@ -24,15 +22,16 @@ class MMBHistSpider(Spider):
     handle_httpstatus_list = [404, 460, 504]
     db = util.set_mongo_server()
 
-    # false：一家在售
-    # true：多家在售
-    if_crawl_price_multiple_item = True
+    # 抓“一家在售”
+    if_crawl_onestore = True
+    # 抓“多家在售”
+    if_crawl_multstore = False
 
 
     def start_requests(self): 
 
         #“一家在售”的商品
-        if self.if_crawl_price_multiple_item == False:
+        if self.if_crawl_onestore:
             bjids = []
             for id in self.db["MMB"].find({'bjid': {'$exists': True}}, {'bjid': 1, '_id': 0}):
                 bjids.append(id['bjid'])
@@ -54,7 +53,7 @@ class MMBHistSpider(Spider):
                 yield Request(url = url, callback = self.parse)
 
         # “多家在售”的商品
-        if self.if_crawl_price_multiple_item == True:
+        if self.if_crawl_multstore:
             p_infos = []
             # 挑出spid, name, url 不重复的记录
             pipeline = [
@@ -86,18 +85,13 @@ class MMBHistSpider(Spider):
                 # 把上一步的 item 传进来
                 p_info = response.meta['p_info']
 
-                #print(response.url)
-                #print(response.body)
-
                 # 解析同一个商品下的多家平台的链接
                 nodes = response.xpath('//div[contains(@class, "pro-mall-list")]//ul//li//div[contains(@class, "item ")]')
 
                 for n in nodes:
-                    #print(n.extract())
                     # 店铺名，不等于 siteName。例如同样siteName = 天猫。可以有sell_name = “vivo旗舰店”or “vivo天诚专卖店”
                     seller_name = n.xpath('div[contains(@class, "mall")]//text()').extract()
                     seller_name = ' '.join(' '.join(seller_name).split())
-                    print(seller_name)
             
                     # get skuid
                     skuid = n.xpath('@skuid').extract()[0]

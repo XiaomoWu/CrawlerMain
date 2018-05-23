@@ -21,7 +21,7 @@ LOG_FILE_MIDDLEWARE = 'log-Middleware.log'
 LOG_FORMAT = '%(asctime)s [%(name)s] %(levelname)s: %(message)s'
 LOG_ENABLED = True
 LOG_STDOUT = True
-LOG_LEVEL = 'DEBUG'
+LOG_LEVEL = 'INFO'
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 USER_AGENTS = [
@@ -47,20 +47,25 @@ USER_AGENTS = [
 DOWNLOADER_MIDDLEWARES = {
     'crawler.middleware.RandomRequestHeaders': 100,
     'crawler.middleware.CustomRetryMiddleware': 501,
-    'crawler.middleware.CustomHttpTunnelMiddleware': 602,
+    #'crawler.middleware.CustomHttpTunnelMiddleware': 102,
 }
 
 # Conncurrent
 CONCURRENT_REQUESTS = 16
-DOWNLOAD_DELAY = 0.15
+CONCURRENT_REQUESTS_PER_DOMAIN = 8
+AUTOTHROTTLE_TARGET_CONCURRENCY = 4
+AUTOTHROTTLE_ENABLE = True
+DOWNLOAD_DELAY = 0
 
-# Disable default HttpProxyMiddleware
+# Proxy
 HTTPPROXY_ENABLED = False
+HTTPPROXY_DELAY = 0.4 # 只对用代理的页面进行delay
 
 # 启用默认的RetryMiddleware，用来retry特定http code的response
 RETRY_ENABLED = True 
 RETRY_TIMES = 3
 RETRY_HTTP_CODES = [500, 502, 503, 504, 408, 460]
+RETRY_PRIORITY_ADJUST = -1
 
 # Redirect
 REDIRECT_ENABLE = True
@@ -88,7 +93,7 @@ MONGODB_DBNAME = 'OnlinePrice'
 DUPEFILTER_CLASS = "scrapy_redis.dupefilter.RFPDupeFilter"
 SCHEDULER = "scrapy_redis.scheduler.Scheduler"
 SCHEDULER_PERSIST = True
-SCHEDULER_FLUSH_ON_START = True
+SCHEDULER_FLUSH_ON_START = False
 
 REDIS_HOST = 'localhost'
 REDIS_PORT = 6379
