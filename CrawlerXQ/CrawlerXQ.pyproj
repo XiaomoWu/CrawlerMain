@@ -4,14 +4,14 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>6ff43c29-2222-42ea-a38b-c8d0a7ecb314</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>
-    </StartupFile>
+    <StartupFile>run_crawler.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
     <OutputPath>.</OutputPath>
     <Name>CrawlerXQ</Name>
     <RootNamespace>CrawlerXQ</RootNamespace>
+    <InterpreterId>MSBuild|env|$(MSBuildProjectFullPath)</InterpreterId>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <DebugSymbols>true</DebugSymbols>
@@ -23,7 +23,6 @@
   </PropertyGroup>
   <ItemGroup>
     <Folder Include="crawler\" />
-    <Folder Include="crawler\scrapy_redis\" />
     <Folder Include="crawler\spiders\" />
   </ItemGroup>
   <ItemGroup>
@@ -32,20 +31,14 @@
     <Compile Include="crawler\items.py" />
     <Compile Include="crawler\middleware.py" />
     <Compile Include="crawler\pipelines.py" />
-    <Compile Include="crawler\scrapy_redis\connection.py" />
-    <Compile Include="crawler\scrapy_redis\defaults.py" />
-    <Compile Include="crawler\scrapy_redis\dupefilter.py" />
-    <Compile Include="crawler\scrapy_redis\picklecompat.py" />
-    <Compile Include="crawler\scrapy_redis\pipelines.py" />
-    <Compile Include="crawler\scrapy_redis\queue.py" />
-    <Compile Include="crawler\scrapy_redis\scheduler.py" />
-    <Compile Include="crawler\scrapy_redis\spiders.py" />
-    <Compile Include="crawler\scrapy_redis\utils.py" />
-    <Compile Include="crawler\scrapy_redis\__init__.py" />
     <Compile Include="crawler\settings.py" />
     <Compile Include="crawler\spiders\cube_info.py" />
     <Compile Include="crawler\spiders\cube_rb.py" />
     <Compile Include="crawler\spiders\cube_ret.py" />
+    <Compile Include="crawler\spiders\atest.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="crawler\spiders\user_cmt.py" />
     <Compile Include="crawler\spiders\user_fans.py" />
     <Compile Include="crawler\spiders\user_follow.py" />
     <Compile Include="crawler\spiders\user_info.py" />
@@ -58,6 +51,17 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="crawler\scrapy.cfg" />
+  </ItemGroup>
+  <ItemGroup>
+    <Interpreter Include="..\env\">
+      <Id>env</Id>
+      <Version>3.6</Version>
+      <Description>env (Python 3.6 (64-bit))</Description>
+      <InterpreterPath>Scripts\python.exe</InterpreterPath>
+      <WindowsInterpreterPath>Scripts\pythonw.exe</WindowsInterpreterPath>
+      <PathEnvironmentVariable>PYTHONPATH</PathEnvironmentVariable>
+      <Architecture>X64</Architecture>
+    </Interpreter>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
   <!-- Uncomment the CoreCompile target to enable the Build command in

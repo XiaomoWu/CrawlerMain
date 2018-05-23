@@ -14,11 +14,12 @@ BOT_NAME = 'CrawlerGuba'
 SPIDER_MODULES = ['crawler.spiders']
 NEWSPIDER_MODULE = 'crawler.spiders'
 
-LOG_FILE_GUBA = 'C:/Code/CrawlerMain/CrawlerGuba/log-Guba.log'
-LOG_FILE_PIPELINE = 'C:/Code/CrawlerMain/CrawlerGuba/log-Pipeline.log'
-LOG_FILE_GUBAEXFUND = 'C:/Code/CrawlerMain/CrawlerGuba/log-GubaExFund.log'
-LOG_FILE_GUBA_USER_INFO = 'C:/Code/CrawlerMain/CrawlerGuba/log-UserInfo.log'
-LOG_FILE_GUBA_REPLY_USER_INFO = 'C:/Code/CrawlerMain/CrawlerGuba/log-ReplyUserInfo.log'
+LOG_FILE_GUBA = '/log-Guba.log'
+LOG_FILE_PIPELINE = '/log-Pipeline.log'
+LOG_FILE_GUBAEXFUND = '/log-GubaExFund.log'
+LOG_FILE_GUBA_USER_INFO = '/log-UserInfo.log'
+LOG_FILE_GUBA_REPLY_USER_INFO = '/log-ReplyUserInfo.log'
+
 LOG_FORMAT = '%(asctime)s [%(name)s] %(levelname)s: %(message)s'
 #LOG_ENABLED = True
 LOG_STDOUT = True
@@ -132,7 +133,7 @@ COOKIES_DEBUG = False
 
 MONGODB_HOST = 'localhost'
 MONGODB_PORT = 27017
-MONGODB_DBNAME = 'test'
+MONGODB_DBNAME = 'Guba'
 
 # Redis
 # Enables scheduling storing requests queue in redis.
@@ -154,7 +155,7 @@ DUPEFILTER_CLASS = "scrapy_redis.dupefilter.RFPDupeFilter"
 SCHEDULER_PERSIST = True
 
 #Whether to flush redis queue on start
-SCHEDULER_FLUSH_ON_START = True
+SCHEDULER_FLUSH_ON_START = False
 
 # Schedule requests using a priority queue. (default)
 #SCHEDULER_QUEUE_CLASS = 'scrapy_redis.queue.PriorityQueue'

@@ -1,19 +1,31 @@
-﻿# -*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 
-# Scrapy settings for crawler_test project
+# Scrapy settings for crawler project
 #
-# For simplicity, this file contains only the most important settings by
-# default. All the other settings are documented here:
+# For simplicity, this file contains only settings considered important or
+# commonly used. You can find more settings consulting the documentation:
 #
 #     http://doc.scrapy.org/en/latest/topics/settings.html
-#
+#     http://scrapy.readthedocs.org/en/latest/topics/downloader-middleware.html
+#     http://scrapy.readthedocs.org/en/latest/topics/spider-middleware.html
 
-BOT_NAME = 'CrawlerTest'
+BOT_NAME = 'CrawlerPrice'
+
 SPIDER_MODULES = ['crawler.spiders']
 NEWSPIDER_MODULE = 'crawler.spiders'
 
-# User agent
-USER_AGENTS = ["Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1; AcooBrowser; .NET CLR 1.1.4322; .NET CLR 2.0.50727)",
+# Log
+LOG_FILE_MMB = 'log-MMB.log'
+LOG_FILE_PIPELINE = 'log-Pipeline.log'
+LOG_FILE_MIDDLEWARE = 'log-Middleware.log'
+LOG_FORMAT = '%(asctime)s [%(name)s] %(levelname)s: %(message)s'
+LOG_ENABLED = True
+LOG_STDOUT = True
+LOG_LEVEL = 'INFO'
+
+# Crawl responsibly by identifying yourself (and your website) on the user-agent
+USER_AGENTS = [
+    "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1; AcooBrowser; .NET CLR 1.1.4322; .NET CLR 2.0.50727)",
     "Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 6.0; Acoo Browser; SLCC1; .NET CLR 2.0.50727; Media Center PC 5.0; .NET CLR 3.0.04506)",
     "Mozilla/4.0 (compatible; MSIE 7.0; AOL 9.5; AOLBuild 4337.35; Windows NT 5.1; .NET CLR 1.1.4322; .NET CLR 2.0.50727)",
     "Mozilla/5.0 (Windows; U; MSIE 9.0; Windows NT 9.0; en-US)",
@@ -27,46 +39,63 @@ USER_AGENTS = ["Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1; AcooBrow
     "Mozilla/5.0 (X11; Linux i686; U;) Gecko/20070322 Kazehakase/0.4.5",
     "Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.0.8) Gecko Fedora/1.9.0.8-1.fc10 Kazehakase/0.5.6",
     "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/535.11 (KHTML, like Gecko) Chrome/17.0.963.56 Safari/535.11",
-    "Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.95 Safari/537.36",
     "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_7_3) AppleWebKit/535.20 (KHTML, like Gecko) Chrome/19.0.1036.7 Safari/535.20",
-    "Opera/9.80 (Macintosh; Intel Mac OS X 10.6.8; U; fr) Presto/2.9.168 Version/11.52",] 
+    "Opera/9.80 (Macintosh; Intel Mac OS X 10.6.8; U; fr) Presto/2.9.168 Version/11.52",
+]
 
-# Downloader middleware
+# Downloader Middleware
 DOWNLOADER_MIDDLEWARES = {
     'crawler.middleware.RandomRequestHeaders': 100,
-    'scrapy.downloadermiddlewares.cookies.CookiesMiddleware': None,
-    'scrapy.downloadermiddlewares.retry.RetryMiddleware': 200,
-    'crawler.HttpProxyMiddleware.HttpProxyMiddleware' : None,
-    'scrapy.downloadermiddlewares.httpproxy.HttpProxyMiddleware': None,
+    'crawler.middleware.CustomRetryMiddleware': 501,
+    #'crawler.middleware.CustomHttpTunnelMiddleware': 102,
 }
 
-# Download delay
+# Conncurrent
+CONCURRENT_REQUESTS = 16
+CONCURRENT_REQUESTS_PER_DOMAIN = 8
+AUTOTHROTTLE_TARGET_CONCURRENCY = 4
+AUTOTHROTTLE_ENABLE = True
 DOWNLOAD_DELAY = 0
 
+# Proxy
+HTTPPROXY_ENABLED = False
+HTTPPROXY_DELAY = 0.4 # 只对用代理的页面进行delay
+
+# 启用默认的RetryMiddleware，用来retry特定http code的response
+RETRY_ENABLED = True 
+RETRY_TIMES = 3
+RETRY_HTTP_CODES = [500, 502, 503, 504, 408, 460]
+RETRY_PRIORITY_ADJUST = -1
+
+# Redirect
+REDIRECT_ENABLE = True
+
 # Pipelines
-ITEM_PIPELINES = {'crawler.pipelines.MongoPipeline': 100,
-                  }
+ITEM_PIPELINES =   {
+    'crawler.pipelines.MongoPipeline': 300,
+    'scrapy_redis.pipelines.RedisPipeline': 301,
+}
 
-# Cookies settings
+# Cookies
 DOWNLOADER_STATS = True
-COOKIES_ENABLED = True
-COOKIES_DEBUG = False
+COOKIES_ENABLED = False
+COOKIES_DEBUG = True
 
+# Don't follow robots.txt
+ROBOTSTXT_OBEY = False
 
-# Log
-LOG_LEVEL = 'DEBUG'
-LOG_STDOUT = False
-LOG_FILE_PIPELINE = 'pipeline.log' 
-
-
-# MongoDB settings
+# MongoDB
 MONGODB_HOST = 'localhost'
 MONGODB_PORT = 27017
-MONGODB_DBNAME = 'Test'
+MONGODB_DBNAME = 'OnlinePrice'
 
 # Redis
+DUPEFILTER_CLASS = "scrapy_redis.dupefilter.RFPDupeFilter"
+SCHEDULER = "scrapy_redis.scheduler.Scheduler"
 SCHEDULER_PERSIST = True
-SCHEDULER_FLUSH_ON_START = True
+SCHEDULER_FLUSH_ON_START = False
+
 REDIS_HOST = 'localhost'
 REDIS_PORT = 6379
+REDIS_DB = 0
 

@@ -1,21 +1,19 @@
-﻿# -*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 
 # Define your item pipelines here
 #
 # Don't forget to add your pipeline to the ITEM_PIPELINES setting
 # See: http://doc.scrapy.org/en/latest/topics/item-pipeline.html
+
+
 from crawler.spiders import util
 from crawler.settings import *
 import json
 import logging
 
-
-
-class CrawlerPipeline(object):
-    pass
-
 class MongoPipeline(object):
     def __init__(self):
+
         # set logger
         self.logger = util.set_logger('pipeline', LOG_FILE_PIPELINE)
 
@@ -25,17 +23,18 @@ class MongoPipeline(object):
         # 建立redis server
         self.redis_server = util.set_redis_server()
 
-    
     def process_item(self, item, spider):
         try:
-            # 如果item又有content又有fp，正常处理
             if "content" in item:
-                #判断 item['content'] 是否是 dict 
                 content = item['content']
+                # type(MMB) = dict ; type(MMBHist) = list
                 if type(content) == list:
                     self.db[spider.name].insert_many(content)
+                elif type(content) == dict:
+                    self.db[spider.name].insert_one(content)
                 else:
-                    self.logger.warn('Pipeline Error (unknown content type): %s %s' % (spider.name, str(type(content)), item['url']))
+                    self.logger.warn('Pipeline Error, unkown item["content"] type: %s %s %s' % (spider.name, str(type(content)), item['url']))
 
         except Exception as ex:
-            self.logger.warn('Pipeline Error (others): %s %s' % (str(ex), item))
+            self.logger.warn('Pipeline Error (others): %s %s' % (str(ex),  str(item['content'])))
+

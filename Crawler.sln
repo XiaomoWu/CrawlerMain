@@ -11,6 +11,8 @@ Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "CrawlerSinaNews", "CrawlerS
 EndProject
 Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "CrawlerXQ", "CrawlerXQ\CrawlerXQ.pyproj", "{6FF43C29-2222-42EA-A38B-C8D0A7ECB314}"
 EndProject
+Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "CrawlerPrice", "CrawlerPrice\CrawlerPrice.pyproj", "{EDF7223E-5FC0-4E53-86EE-543F510E84DE}"
+EndProject
 Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "CrawlerChinaVitae", "CrawlerChinaVitae\CrawlerChinaVitae.pyproj", "{8D36F9D4-8C74-471D-BC4C-89570F0B983E}"
 EndProject
 Global
@@ -27,6 +29,8 @@ Global
 		{E816693A-EAED-4DB6-8F4C-ABF7F93FC7D2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6FF43C29-2222-42EA-A38B-C8D0A7ECB314}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{6FF43C29-2222-42EA-A38B-C8D0A7ECB314}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EDF7223E-5FC0-4E53-86EE-543F510E84DE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EDF7223E-5FC0-4E53-86EE-543F510E84DE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8D36F9D4-8C74-471D-BC4C-89570F0B983E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{8D36F9D4-8C74-471D-BC4C-89570F0B983E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 	EndGlobalSection

@@ -11,9 +11,6 @@ import re
 import json
 import time
 
-
-
-
 class XQCubeInfoSpider(Spider):
     start_at=datetime.now()
     name='xq_cube_info_updt'
@@ -21,14 +18,14 @@ class XQCubeInfoSpider(Spider):
     handle_httpstatus_list = [404]
     website_possible_httpstatus_list = [404]
 
-    cube_type = 'ZH'
+    cube_type = 'SP'
 
 
     def start_requests(self):
         start_url="https://xueqiu.com/p/"
-        start_page = 100
+        start_page = 1
 
-        end_page = 200
+        end_page = 1000000
 
         # iterate each page
         all_page_n = end_page - start_page + 1
@@ -48,8 +45,8 @@ class XQCubeInfoSpider(Spider):
 
             #自定义进度条
             if i%500==0:
-                self.logger.info('%s (%s / %s)' % (symbol, str(now_page_n), str(all_page_n)))
-                util.get_progress(now_page = now_page_n, all_page = all_page_n, logger = self.logger, spider_name = self.name, start_at = self.start_at)
+                self.logger.info('%s (%s / %s) %s%%' % (symbol, str(now_page_n), str(all_page_n), str(round(float(now_page_n) / all_page_n * 100, 1))))
+                #util.get_progress(all_page = all_page_n, logger = self.logger, spider_name = self.name, start_at = self.start_at)
 
             yield Request(url=url,
                                 callback=self.parse, meta = {'cube_type':self.cube_type})

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from crawler.scrapy_redis.spiders import RedisSpider
+from scrapy_redis.spiders import RedisSpider
 from crawler.spiders import util
 from scrapy.spiders import Spider
 from datetime import datetime
@@ -22,7 +22,7 @@ class XQCubeRetSpider(RedisSpider):
     #handle_httpstatus_list = []
     website_possible_httpstatus_list = [301,302,404]
     handle_httpstatus_list = [301, 302]
-    cube_type = 'ZH'
+    cube_type = 'SP'
 
     def start_requests(self):
         zh_url = 'https://xueqiu.com/cubes/nav_daily/all.json?cube_symbol='
@@ -36,29 +36,36 @@ class XQCubeRetSpider(RedisSpider):
             symbols.append(s['symbol'])
         symbols = list(set(symbols))
 
-        #for s in db.fail.find({}, {'cube_symbol': 1, '_id': 0}):
-        #    symbols.append(s['cube_symbol'])
-        #symbols = list(set(symbols))
-        #print(len(symbols))
+        for s in db.fail.find({}, {'cube_symbol': 1, '_id': 0}):
+            symbols.append(s['cube_symbol'])
+        symbols = list(set(symbols))
+        print(len(symbols))
 
         # iterate each symbol
         all_page_n = len(symbols)
         for i in range(all_page_n):
+            now_page_n = i
             symbol = symbols[i].strip()
             if self.cube_type == 'SP':
                 url = sp_url + symbol
             elif self.cube_type == 'ZH':
                 url = zh_url + symbol
 
-            # 进度条
+        #    # 进度条
             if i%1000==0:
-                self.logger.info('%s / %s' % (str(i), str(all_page_n)))
-                util.get_progress(now_page = i, all_page = all_page_n, logger = self.logger, spider_name = self.name, start_at = self.start_at)
+                 self.logger.info('%s (%s / %s) %s%%' % (symbol, str(now_page_n), str(all_page_n), str(round(float(now_page_n) / all_page_n * 100, 1))))
+                #util.get_progress(now_page = i, all_page = all_page_n, logger = self.logger, spider_name = self.name, start_at = self.start_at)
 
             yield Request(url = url,
                     meta = {'symbol': symbol, 
                     'cube_type':self.cube_type},
                         callback = self.parse)
+
+        #url = "https://xueqiu.com/service/tc/snowx/PAMID/cubes/nav_daily/all?cube_symbol=SP1030959"
+        #yield Request(url = url,
+        #            meta = {'symbol': "SP1030959", 
+        #            'cube_type':self.cube_type},
+        #                callback = self.parse)
 
     def parse(self, response):
         try:
@@ -84,5 +91,8 @@ class XQCubeRetSpider(RedisSpider):
                               meta=oldmeta,
                               callback = self.parse)
         except Exception as ex:
-            self.logger.warn('Parse Exception: %s %s' % (str(ex), response.url))
+            #self.logger.warn('Parse Exception: %s %s' % (str(ex), response.url))
+            self.logger.info(response.meta['symbol'])
+            #self.logger.info(response.url)
+            self.logger.info(response.body)
 

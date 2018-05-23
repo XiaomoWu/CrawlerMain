@@ -43,16 +43,17 @@ DOWNLOADER_MIDDLEWARES = {
 DOWNLOAD_DELAY = 0
 
 # Pipelines
-ITEM_PIPELINES = {'crawler.pipelines.MongoPipeline': 100,
-                  'crawler.scrapy_redis.pipelines.RedisPipeline': 300
-                  }
+ITEM_PIPELINES = {'crawler.pipelines.MongoPipeline': 100, 
+}
 
 # Cookies settings
 DOWNLOADER_STATS = True
 COOKIES_ENABLED = True
 COOKIES_DEBUG = False
-COOKIES = [{'xq_a_token': '05fb8718bacbf3df8f3a4da42ecffcc7dc61b13f',
-'xq_r_token': 'aacd78ef2bd8c73e6f514a9e2bd71854cdbb9a40'}]
+COOKIES = [{
+    'xq_a_token': '229a3a53d49b5d0078125899e528279b0e54b5fe',
+    'xq_r_token': '8a43eb9046efe1c0a8437476082dc9aac6db2626'
+}]
 
 
 
@@ -69,6 +70,7 @@ LOG_FILE_USER_INFO = 'user_info.log'
 LOG_FILE_USER_STOCK = 'user_stock.log' 
 LOG_FILE_USER_GUANZHU = 'user_guanzhu.log' 
 LOG_FILE_USER_FENSI = 'user_fensi.log' 
+LOG_FILE_USER_STATUS = 'user_status.log'
 LOG_FILE_PROXY = 'proxy.log'
 LOG_FILE_PIPELINE = 'pipeline.log' 
 
@@ -76,14 +78,14 @@ LOG_FILE_PIPELINE = 'pipeline.log'
 # MongoDB settings
 MONGODB_HOST = 'localhost'
 MONGODB_PORT = 27017
-MONGODB_DBNAME = 'XQ-2017-09'
+MONGODB_DBNAME = 'XQ-2018-03'
 
 # Redis
 # Enables scheduling storing requests queue in redis.
-SCHEDULER = "crawler.scrapy_redis.scheduler.Scheduler"
+SCHEDULER = "scrapy_redis.scheduler.Scheduler"
 
 # Ensure all spiders share same duplicates filter through redis.
-DUPEFILTER_CLASS = "crawler.scrapy_redis.dupefilter.RFPDupeFilter"
+DUPEFILTER_CLASS = "scrapy_redis.dupefilter.RFPDupeFilter"
 
 # Default requests serializer is pickle, but it can be changed to any module
 # with loads and dumps functions. Note that pickle is not compatible between
@@ -124,6 +126,9 @@ SCHEDULER_PERSIST = True
 # Specify the host and port to use when connecting to Redis (optional).
 REDIS_HOST = 'localhost'
 REDIS_PORT = 6379
+
+#Whether to flush redis queue on start
+SCHEDULER_FLUSH_ON_START = False
 
 # Specify the full Redis URL for connecting (optional).
 # If set, this takes precedence over the REDIS_HOST and REDIS_PORT settings.
