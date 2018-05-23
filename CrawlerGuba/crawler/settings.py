@@ -16,6 +16,7 @@ NEWSPIDER_MODULE = 'crawler.spiders'
 
 LOG_FILE_GUBA = 'C:/Code/CrawlerMain/CrawlerGuba/log-Guba.log'
 LOG_FILE_PIPELINE = 'C:/Code/CrawlerMain/CrawlerGuba/log-Pipeline.log'
+LOG_FILE_GUBAEXFUND = 'C:/Code/CrawlerMain/CrawlerGuba/log-GubaExFund.log'
 LOG_FILE_GUBA_USER_INFO = 'C:/Code/CrawlerMain/CrawlerGuba/log-UserInfo.log'
 LOG_FILE_GUBA_REPLY_USER_INFO = 'C:/Code/CrawlerMain/CrawlerGuba/log-ReplyUserInfo.log'
 LOG_FORMAT = '%(asctime)s [%(name)s] %(levelname)s: %(message)s'

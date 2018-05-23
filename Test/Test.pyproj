@@ -52,9 +52,6 @@
     <Folder Include="crawler\scrapy_redis\" />
     <Folder Include="crawler\spiders\" />
   </ItemGroup>
-  <ItemGroup>
-    <InterpreterReference Include="Global|ContinuumAnalytics|Anaconda36-64" />
-  </ItemGroup>
   <!-- Uncomment the CoreCompile target to enable the Build command in
        Visual Studio and specify your pre- and post-build commands in
        the BeforeBuild and AfterBuild targets below. -->

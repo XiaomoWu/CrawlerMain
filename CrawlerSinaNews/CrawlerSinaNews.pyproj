@@ -24,9 +24,6 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
-    <InterpreterReference Include="Global|ContinuumAnalytics|Anaconda36-64" />
-  </ItemGroup>
-  <ItemGroup>
     <Folder Include="crawler\" />
     <Folder Include="crawler\spiders\" />
   </ItemGroup>
