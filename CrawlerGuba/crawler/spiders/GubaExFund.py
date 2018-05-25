@@ -242,35 +242,24 @@ class GubaExFundSpider(Spider):
             reply_time = datetime.strptime(reply_time, "%Y-%m-%d %H:%M:%S")
             reply['reply_time'] = reply_time
             
-            reply_content = Selector(text = replist).xpath('//div[contains(@class, "stockcodec")]').extract()[0]
-            try:
-                reply_content = re.search('stockcodec">(.+)<', reply_content).group(1).strip()
-                reply['reply_content'] = reply_content
-            except Exception as ex:
-                reply['reply_content'] = reply_content
+            reply_content = Selector(text = replist).xpath('//div[@class="zwlitext stockcodec"]/text()').extract()
+            if reply_content:
+                reply['reply_content'] = reply_content[0].strip()
         
-            reply_quote_author = Selector(text = replist).xpath('//div[@class="zwlitalkboxuinfo"]//a/text()').extract()
+            reply_quote_author = Selector(text = replist).xpath('//div[@class="zwlitalkboxtext "]//a/text()').extract()
             if reply_quote_author:
                 reply_quote_author = reply_quote_author[0]
                 reply['reply_quote_author'] = reply_quote_author
 
-            reply_quote_author_url = Selector(text = replist).xpath('//div[@class="zwlitalkboxuinfo"]//a/@href').extract()
+            reply_quote_author_url = Selector(text = replist).xpath('//div[@class="zwlitalkboxtext "]//a/@href').extract()
             if reply_quote_author_url:
                 reply_quote_author_url = reply_quote_author_url[0]
                 reply['reply_quote_author_url'] = reply_quote_author_url
 
-            reply_quote_text = Selector(text = replist).xpath('//div[@class= "zwlitalkboxtext"]').extract()
+            reply_quote_text = Selector(text = replist).xpath('//div[@class= "zwlitalkboxtext "]/span/text()').extract()
             if reply_quote_text:
                 reply_quote_text = reply_quote_text[0]
-                reply_quote_content = re.search('"zwlitalkboxtext">(.+)<\/div>', str(reply_quote_text)).group(1)
-                reply['reply_quote_content'] =  reply_quote_content
-
-            reply_quote_timestamp = Selector(text = replist).xpath('//div[@class="zwlitalkboxtime"]/text()').extract()
-            if reply_quote_timestamp:
-                reply_quote_timestamp = re.search('\D+(\d{4}.+:\d{2})',reply_quote_timestamp[0]).group(1)
-                reply_quote_timestamp = re.sub("/","-",  reply_quote_timestamp)
-                reply_quote_time = datetime.strptime(str(reply_quote_timestamp), "%Y-%m-%d %H:%M:%S")
-                reply['reply_quote_time'] = reply_quote_time
+                reply['reply_quote_content'] =  reply_quote_text
            
             item['content']['reply'].append(reply)
             
