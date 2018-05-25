@@ -14,11 +14,11 @@ BOT_NAME = 'CrawlerGuba'
 SPIDER_MODULES = ['crawler.spiders']
 NEWSPIDER_MODULE = 'crawler.spiders'
 
-LOG_FILE_GUBA = '/log-Guba.log'
-LOG_FILE_PIPELINE = '/log-Pipeline.log'
-LOG_FILE_GUBAEXFUND = '/log-GubaExFund.log'
-LOG_FILE_GUBA_USER_INFO = '/log-UserInfo.log'
-LOG_FILE_GUBA_REPLY_USER_INFO = '/log-ReplyUserInfo.log'
+LOG_FILE_GUBA = 'log-Guba.log'
+LOG_FILE_PIPELINE = 'log-Pipeline.log'
+LOG_FILE_GUBAEXFUND = 'log-GubaExFund.log'
+LOG_FILE_GUBA_USER_INFO = 'log-UserInfo.log'
+LOG_FILE_GUBA_REPLY_USER_INFO = 'log-ReplyUserInfo.log'
 
 LOG_FORMAT = '%(asctime)s [%(name)s] %(levelname)s: %(message)s'
 #LOG_ENABLED = True
@@ -132,8 +132,8 @@ COOKIES_DEBUG = False
 #HTTPCACHE_STORAGE = 'scrapy.extensions.httpcache.FilesystemCacheStorage'
 
 MONGODB_HOST = 'localhost'
-MONGODB_PORT = 27017
-MONGODB_DBNAME = 'Guba'
+MONGODB_PORT = 27018
+MONGODB_DBNAME = 'Guba-1805'
 
 # Redis
 # Enables scheduling storing requests queue in redis.
