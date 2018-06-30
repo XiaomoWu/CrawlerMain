@@ -12,10 +12,10 @@ import re
 
 class XQUserFensi(Spider):
     start_at=datetime.now()
-    name = 'xq_user_fans_updt'
+    name = 'xq_user_fans'
     logger = util.set_logger(name, LOG_FILE_USER_FENSI)
     #handle_httpstatus_list = [404]
-    cube_type = 'ZH'
+    cube_type = 'SP'
 
 
     def start_requests(self):
@@ -24,7 +24,7 @@ class XQUserFensi(Spider):
         # get start url from MongoDB
         db = util.set_mongo_server()
         owner_ids = []
-        for id in db.xq_cube_info_updt.find({'cube_type':self.cube_type}, {'owner_id': 1, '_id': 0}):
+        for id in db.xq_cube_info.find({'cube_type':self.cube_type}, {'owner_id': 1, '_id': 0}):
             owner_ids.append(id['owner_id'])
         owner_ids = list(set(owner_ids))
 

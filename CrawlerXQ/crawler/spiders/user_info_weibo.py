@@ -14,10 +14,10 @@ import re
 
 class XQUserInfoWeiboSpider(Spider):
     start_at=datetime.now()
-    name = 'xq_user_info_weibo_updt'
+    name = 'xq_user_info_weibo'
     logger = util.set_logger(name, LOG_FILE_USER_INFO)
     #handle_httpstatus_list = [404]
-    cube_type = 'SP'
+    cube_type = 'ZH'
 
     def start_requests(self):
         start_url="https://xueqiu.com/account/oauth/user/show.json?source=sina&userid="
@@ -25,7 +25,7 @@ class XQUserInfoWeiboSpider(Spider):
         # get start url from MongoDB
         db = util.set_mongo_server()
         owner_ids = []
-        for id in db.xq_cube_info_updt.find({'cube_type':self.cube_type}, {'owner_id': 1, '_id': 0}):
+        for id in db.xq_cube_info.find({'cube_type':self.cube_type}, {'owner_id': 1, '_id': 0}):
             owner_ids.append(id['owner_id'])
         owner_ids = list(set(owner_ids))
 

@@ -13,7 +13,7 @@ import time
 
 class XQCubeInfoSpider(Spider):
     start_at=datetime.now()
-    name='xq_cube_info_updt'
+    name='xq_cube_info'
     logger = util.set_logger(name, LOG_FILE_CUBE_INFO)
     handle_httpstatus_list = [404]
     website_possible_httpstatus_list = [404]
@@ -23,9 +23,11 @@ class XQCubeInfoSpider(Spider):
 
     def start_requests(self):
         start_url="https://xueqiu.com/p/"
-        start_page = 1
 
-        end_page = 1000000
+        # 对于ZH，从100至200万     XQ-1803, ZH: 1320315个；SP：1354210（33895）个
+        # 对于SP，从100万至110万
+        start_page = 1100000
+        end_page = 1500000
 
         # iterate each page
         all_page_n = end_page - start_page + 1

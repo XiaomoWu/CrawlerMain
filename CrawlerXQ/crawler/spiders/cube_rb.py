@@ -12,9 +12,9 @@ import re
 
 class XQCubeRBSpider(Spider):
     start_at=datetime.now()
-    name = 'xq_cube_rb_updt'
+    name = 'xq_cube_rb_sp'
     logger = util.set_logger(name, LOG_FILE_CUBE_RB)
-    #handle_httpstatus_list = [404]
+    #handle_httpstatus_list = [400]
 
     cube_type = 'SP'
 
@@ -27,7 +27,7 @@ class XQCubeRBSpider(Spider):
         db = util.set_mongo_server()
         symbols = []
 
-        for s in db.xq_cube_info_updt.find({'cube_type':self.cube_type}, {'symbol': 1, '_id': 0}):
+        for s in db.xq_cube_info.find({'cube_type':self.cube_type}, {'symbol': 1, '_id': 0}):
             symbols.append(s['symbol'])
         symbols = list(set(symbols))
 

@@ -13,7 +13,7 @@ import re
 
 class XQUserGuanzhu(Spider):
     start_at=datetime.now()
-    name = 'xq_user_follow_updt'
+    name = 'xq_user_follow'
     logger = util.set_logger(name, LOG_FILE_USER_GUANZHU)
     #handle_httpstatus_list = [404]
     cube_type = 'ZH'
@@ -24,7 +24,7 @@ class XQUserGuanzhu(Spider):
         # get start url from MongoDB
         db = util.set_mongo_server()
         owner_ids = []
-        for id in db.xq_cube_info_updt.find({'cube_type':self.cube_type}, {'owner_id': 1, '_id': 0}):
+        for id in db.xq_cube_info.find({'cube_type':self.cube_type}, {'owner_id': 1, '_id': 0}):
             owner_ids.append(id['owner_id'])
         owner_ids = list(set(owner_ids))
 

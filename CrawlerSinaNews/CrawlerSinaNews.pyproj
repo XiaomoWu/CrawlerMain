@@ -13,7 +13,8 @@
     <OutputPath>.</OutputPath>
     <Name>CrawlerSinaNews</Name>
     <RootNamespace>CrawlerSinaNews</RootNamespace>
-    <InterpreterId>Global|ContinuumAnalytics|Anaconda36-64</InterpreterId>
+    <InterpreterId>
+    </InterpreterId>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <DebugSymbols>true</DebugSymbols>

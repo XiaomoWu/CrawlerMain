@@ -11,10 +11,10 @@ import re
 
 class XQUserInfo(Spider):
     start_at=datetime.now()
-    name = 'xq_user_stock_updt'
+    name = 'xq_user_stock'
     logger = util.set_logger(name, LOG_FILE_USER_STOCK)
     #handle_httpstatus_list = [404]
-    cube_type = 'SP'
+    cube_type = 'ZH'
 
     def start_requests(self):
         start_url="https://xueqiu.com/stock/portfolio/stocks.json?size=5000&tuid="
@@ -22,7 +22,7 @@ class XQUserInfo(Spider):
         # get start url from MongoDB
         db = util.set_mongo_server()
         owner_ids = []
-        for id in db.xq_cube_info_updt.find({'cube_type':self.cube_type}, {'owner_id': 1, '_id': 0}):
+        for id in db.xq_cube_info.find({'cube_type':self.cube_type}, {'owner_id': 1, '_id': 0}):
             owner_ids.append(id['owner_id'])
         owner_ids = list(set(owner_ids))
 

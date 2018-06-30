@@ -65,8 +65,8 @@ LOG_FILE_SINANEWS = 'sinanews.log'
 
 # MongoDB settings
 MONGODB_HOST = 'localhost'
-MONGODB_PORT = 27017
-MONGODB_DBNAME = 'SinaNews'
+MONGODB_PORT = 27018
+MONGODB_DBNAME = 'SinaNews-1805'
 
 # Redis
 # Enables scheduling storing requests queue in redis.
