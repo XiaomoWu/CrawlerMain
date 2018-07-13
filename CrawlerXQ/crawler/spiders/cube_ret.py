@@ -16,13 +16,13 @@ import re
 
 class XQCubeRetSpider(RedisSpider):
 
-    name = 'xq_cube_ret_updt'
+    name = 'xq_cube_ret'
     start_at=datetime.now()
     logger = util.set_logger(name, LOG_FILE_CUBE_RET)
     #handle_httpstatus_list = []
     website_possible_httpstatus_list = [301,302,404]
     handle_httpstatus_list = [301, 302]
-    cube_type = 'SP'
+    cube_type = 'ZH'
 
     def start_requests(self):
         zh_url = 'https://xueqiu.com/cubes/nav_daily/all.json?cube_symbol='
@@ -32,7 +32,7 @@ class XQCubeRetSpider(RedisSpider):
         db = util.set_mongo_server()
         
         symbols = []
-        for s in db.xq_cube_info_updt.find({'cube_type':self.cube_type}, {'symbol': 1, '_id': 0}):
+        for s in db.xq_cube_info.find({'cube_type':self.cube_type}, {'symbol': 1, '_id': 0}):
             symbols.append(s['symbol'])
         symbols = list(set(symbols))
 

@@ -18,9 +18,11 @@ class SinaNewsSpider(Spider):
     handle_httpstatus_list = [404]
 
     def start_requests(self):
-        start_url = "http://roll.news.sina.com.cn/interface/rollnews_ch_out_interface.php?col=98&num=5010&date="    
+        # 新闻类别 col 取值 (90:国内,91:国际,92:社会,94:体育,95:娱乐,93:军事,96:科技,97:财经,98:股市,99:美股)
+        col = "99"
+        start_url = "http://roll.news.sina.com.cn/interface/rollnews_ch_out_interface.php?col=%s&num=5010&date=" % (col)    
         start_date = datetime.strptime("2010-01-01", "%Y-%m-%d").date()
-        end_date = datetime.strptime("2017-09-30", "%Y-%m-%d").date()
+        end_date = datetime.strptime("2018-05-30", "%Y-%m-%d").date()
         url_date = []
         
         s_d = start_date

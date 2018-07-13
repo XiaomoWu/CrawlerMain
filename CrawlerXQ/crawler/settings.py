@@ -33,14 +33,33 @@ USER_AGENTS = ["Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1; AcooBrow
 
 # Downloader middleware
 DOWNLOADER_MIDDLEWARES = {
-    'crawler.middleware.RandomRequestHeaders': 2,
-    'scrapy.downloadermiddlewares.cookies.CookiesMiddleware': 3,
-    'crawler.HttpProxyMiddleware.HttpProxyMiddleware' : None,
-    'scrapy.downloadermiddlewares.httpproxy.HttpProxyMiddleware': 101,
+    'crawler.middleware.RandomRequestHeaders': 100,
+    'crawler.middleware.CustomHttpTunnelMiddleware': 200,
 }
 
 # Download delay
-DOWNLOAD_DELAY = 0
+DOWNLOAD_DELAY = 0.05
+
+# Auto Throttle
+AUTO_THROTTLE_ENABLE = True
+AUTO_THROTTLE_START_DELAY = 1
+CONCURRENT_REQUESTS_PER_DOMAIN = 64
+CONCURRENT_REQUESTS = 64
+CONCURRENT_ITEMS = 1000
+
+
+
+
+# Retry
+RETRY_PRIORITY_ADJUST = -1
+RETRY_ENABLED = True 
+RETRY_TIMES = 3
+RETRY_HTTP_CODES = [500, 502, 503, 504, 408, 460]
+RETRY_PRIORITY_ADJUST = -1
+
+# Proxy
+HTTPPROXY_DELAY = 0.4
+
 
 # Pipelines
 ITEM_PIPELINES = {'crawler.pipelines.MongoPipeline': 100, 
@@ -51,8 +70,14 @@ DOWNLOADER_STATS = True
 COOKIES_ENABLED = True
 COOKIES_DEBUG = False
 COOKIES = [{
-    'xq_a_token': '229a3a53d49b5d0078125899e528279b0e54b5fe',
-    'xq_r_token': '8a43eb9046efe1c0a8437476082dc9aac6db2626'
+    #登陆cookie
+    'xq_a_token': '07ec0c74b1980ed28bce12abbb0500260ffc19a0',
+    'xq_r_token': 'c3028b0fe0603f36f34a603187a7a61023fa3d16',
+
+    #非登陆cookie
+    #抓SP的RB和RET时候，要用非登陆cookie！！！！
+    #'xq_a_token': '7443762eee8f6a162df9eef231aa080d60705b21',
+    #'xq_r_token': '9ca9ab04037f292f4d5b0683b20266c0133bd863'
 }]
 
 
@@ -60,9 +85,7 @@ COOKIES = [{
 # Log
 # 不能写入LOG_FILE，因为LOG_FILE是root
 LOG_LEVEL = 'INFO'
-LOG_STDOUT = False
-
-
+LOG_STDOUT = True
 LOG_FILE_CUBE_INFO = 'cube_info.log' 
 LOG_FILE_CUBE_RB = 'cube_rb.log' 
 LOG_FILE_CUBE_RET = 'cube_ret.log' 
@@ -73,12 +96,14 @@ LOG_FILE_USER_FENSI = 'user_fensi.log'
 LOG_FILE_USER_STATUS = 'user_status.log'
 LOG_FILE_PROXY = 'proxy.log'
 LOG_FILE_PIPELINE = 'pipeline.log' 
+LOG_FILE_MIDDLEWARE = 'log-Middleware.log'
+
 
 
 # MongoDB settings
 MONGODB_HOST = 'localhost'
-MONGODB_PORT = 27017
-MONGODB_DBNAME = 'XQ-2018-03'
+MONGODB_PORT = 27018
+MONGODB_DBNAME = 'XQ-1806'
 
 # Redis
 # Enables scheduling storing requests queue in redis.
