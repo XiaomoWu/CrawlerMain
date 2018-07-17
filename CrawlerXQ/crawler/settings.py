@@ -34,7 +34,9 @@ USER_AGENTS = ["Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1; AcooBrow
 # Downloader middleware
 DOWNLOADER_MIDDLEWARES = {
     'crawler.middleware.RandomRequestHeaders': 100,
+
     'crawler.middleware.CustomHttpTunnelMiddleware': 200,
+
 }
 
 # Download delay
@@ -61,6 +63,21 @@ RETRY_PRIORITY_ADJUST = -1
 HTTPPROXY_DELAY = 0.4
 
 
+# Auto Throttle
+AUTO_THROTTLE_ENABLE = True
+AUTO_THROTTLE_START_DELAY = 1
+
+# Retry
+RETRY_PRIORITY_ADJUST = -1
+RETRY_ENABLED = True 
+RETRY_TIMES = 3
+RETRY_HTTP_CODES = [500, 502, 503, 504, 408, 460]
+RETRY_PRIORITY_ADJUST = -1
+
+# Proxy
+HTTPPROXY_DELAY = 0.4
+
+
 # Pipelines
 ITEM_PIPELINES = {'crawler.pipelines.MongoPipeline': 100, 
 }
@@ -71,6 +88,7 @@ COOKIES_ENABLED = True
 COOKIES_DEBUG = False
 COOKIES = [{
     #登陆cookie
+
     'xq_a_token': '07ec0c74b1980ed28bce12abbb0500260ffc19a0',
     'xq_r_token': 'c3028b0fe0603f36f34a603187a7a61023fa3d16',
 
@@ -78,6 +96,7 @@ COOKIES = [{
     #抓SP的RB和RET时候，要用非登陆cookie！！！！
     #'xq_a_token': '7443762eee8f6a162df9eef231aa080d60705b21',
     #'xq_r_token': '9ca9ab04037f292f4d5b0683b20266c0133bd863'
+
 }]
 
 

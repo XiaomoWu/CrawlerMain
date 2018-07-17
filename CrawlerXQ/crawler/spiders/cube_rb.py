@@ -12,7 +12,9 @@ import re
 
 class XQCubeRBSpider(Spider):
     start_at=datetime.now()
+
     name = 'xq_cube_rb'
+
     logger = util.set_logger(name, LOG_FILE_CUBE_RB)
     #handle_httpstatus_list = [400]
 

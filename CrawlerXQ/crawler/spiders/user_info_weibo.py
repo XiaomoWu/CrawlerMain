@@ -24,7 +24,9 @@ class XQUserInfoWeiboSpider(Spider):
         # get start url from MongoDB
         db = util.set_mongo_server()
         owner_ids = []
+
         for id in db.xq_cube_info.find({}, {'owner_id': 1, '_id': 0}):
+
             owner_ids.append(id['owner_id'])
         owner_ids = list(set(owner_ids))
 
