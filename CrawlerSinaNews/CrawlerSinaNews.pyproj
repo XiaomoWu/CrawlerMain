@@ -13,8 +13,10 @@
     <OutputPath>.</OutputPath>
     <Name>CrawlerSinaNews</Name>
     <RootNamespace>CrawlerSinaNews</RootNamespace>
-    <InterpreterId>
-    </InterpreterId>
+
+    <InterpreterId>Global|PythonCore|3.6</InterpreterId>
+
+
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <DebugSymbols>true</DebugSymbols>
@@ -40,6 +42,9 @@
     <Compile Include="crawler\spiders\__init__.py" />
     <Compile Include="crawler\__init__.py" />
     <Compile Include="run_crawler.py" />
+  </ItemGroup>
+  <ItemGroup>
+    <InterpreterReference Include="Global|PythonCore|3.6" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

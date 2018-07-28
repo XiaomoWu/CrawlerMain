@@ -17,7 +17,6 @@ class XQUserInfoWeiboSpider(Spider):
     name = 'xq_user_info_weibo'
     logger = util.set_logger(name, LOG_FILE_USER_INFO)
     #handle_httpstatus_list = [404]
-    cube_type = 'ZH'
 
     def start_requests(self):
         start_url="https://xueqiu.com/account/oauth/user/show.json?source=sina&userid="
@@ -25,7 +24,9 @@ class XQUserInfoWeiboSpider(Spider):
         # get start url from MongoDB
         db = util.set_mongo_server()
         owner_ids = []
-        for id in db.xq_cube_info.find({'cube_type':self.cube_type}, {'owner_id': 1, '_id': 0}):
+
+        for id in db.xq_cube_info.find({}, {'owner_id': 1, '_id': 0}):
+
             owner_ids.append(id['owner_id'])
         owner_ids = list(set(owner_ids))
 
@@ -47,7 +48,7 @@ class XQUserInfoWeiboSpider(Spider):
 
     def parse(self, response):
         try:
-            if response.status == 200:
+            if response.status == 200 and str(response.url) != "https://xueqiu.com/service/captcha":
                 body = json.loads(response.body.decode('utf-8'))
                 if 'id' in body:
                     item = XQItem()
@@ -58,6 +59,9 @@ class XQUserInfoWeiboSpider(Spider):
                     item['content'] = content
                     item['fp'] = request_fingerprint(response.request)
                     yield item
+
+            elif str(response.url) == "https://xueqiu.com/service/captcha":
+                self.logger.error('CAPTURE ERROR: UID %s' % (response.meta['user_id']))
 
         except Exception as ex:
             self.logger.warn('Parse Exception: %s %s' % (str(ex), response.url))

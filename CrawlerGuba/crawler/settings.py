@@ -21,7 +21,7 @@ LOG_FILE_GUBA_USER_INFO = 'log-UserInfo.log'
 LOG_FILE_GUBA_REPLY_USER_INFO = 'log-ReplyUserInfo.log'
 
 LOG_FORMAT = '%(asctime)s [%(name)s] %(levelname)s: %(message)s'
-#LOG_ENABLED = True
+LOG_ENABLED = True
 LOG_STDOUT = True
 LOG_LEVEL = 'INFO'
 
@@ -45,7 +45,7 @@ USER_AGENTS = [
     "Opera/9.80 (Macintosh; Intel Mac OS X 10.6.8; U; fr) Presto/2.9.168 Version/11.52",
 ]
 # Obey robots.txt rules
-ROBOTSTXT_OBEY = True
+ROBOTSTXT_OBEY = False
 
 
 # Configure maximum concurrent requests performed by Scrapy (default: 16)

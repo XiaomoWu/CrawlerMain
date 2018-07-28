@@ -79,7 +79,7 @@ class CustomHttpTunnelMiddleware(object):
         new_request = request.copy()
         new_request.meta["proxy"] = self.proxy_server
         new_request.headers["Proxy-Authorization"] = self.proxy_auth
-        new_request.dont_filter = True
+        new_request.dont_filter = False
         logger.debug("Use proxy to request %s" % new_request.url)
         new_request.priority = new_request.priority + RETRY_PRIORITY_ADJUST
         time.sleep(HTTPPROXY_DELAY)

@@ -12,11 +12,13 @@ import re
 
 class XQCubeRBSpider(Spider):
     start_at=datetime.now()
-    name = 'xq_cube_rb_sp'
+
+    name = 'xq_cube_rb'
+
     logger = util.set_logger(name, LOG_FILE_CUBE_RB)
     #handle_httpstatus_list = [400]
 
-    cube_type = 'SP'
+    cube_type = 'ZH'
 
     def start_requests(self):
         zh_url = 'https://xueqiu.com/cubes/rebalancing/history.json?count=50&cube_symbol='

@@ -5,8 +5,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>066333e6-38b5-4b69-b310-b04e83894497</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>
-    </StartupFile>
+    <StartupFile>run_crawler.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
@@ -33,13 +32,13 @@
     <Compile Include="crawler\pipelines.py" />
     <Compile Include="crawler\settings.py" />
     <Compile Include="crawler\spiders\Guba.py" />
-    <Compile Include="crawler\spiders\GubaExFund.py">
+    <Compile Include="crawler\spiders\guba_stock_posts.py">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="crawler\spiders\GubaReplyUserInfo.py">
+    <Compile Include="crawler\spiders\guba_reply_user_info.py">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="crawler\spiders\GubaUserInfo.py" />
+    <Compile Include="crawler\spiders\guba_user_info.py" />
     <Compile Include="crawler\spiders\util.py" />
     <Compile Include="crawler\spiders\__init__.py" />
     <Compile Include="crawler\__init__.py" />
